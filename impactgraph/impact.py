@@ -56,9 +56,9 @@ def changed_functions(repo: Path, commit: str | None, src_dir: str = "src") -> l
     return sorted(out)
 
 
-def decide(changed: list[str], per_function: int = 5, budget: int = 60) -> Decision:
-    g = connect()
-    rows = lambda q, **p: g.query(q, p).result_set
+def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 60) -> Decision:
+    g = connect(repo)
+    rows = lambda q, **p: g.ro_query(q, p).result_set
 
     total = rows("MATCH (t:Test) RETURN count(t)")[0][0]
     info = [dict(zip(["id", "qualname", "module", "tests", "churn"], r))
@@ -123,9 +123,9 @@ def decide(changed: list[str], per_function: int = 5, budget: int = 60) -> Decis
                     total, uncovered, cochanged[:8], blast)
 
 
-def explain(test: str, function: str) -> list[str]:
-    r = connect().query(Q.EXPLAIN_PATH, {"test": test, "function": function}).result_set
-    return r[0][0] if r else []
+def explain(repo: Path, test: str, function: str) -> list[str]:
+    r = connect(repo).ro_query(Q.EXPLAIN_PATH, {"test": test, "function": function}).result_set
+    return min(r, key=lambda row: row[1])[0] if r else []
 
 
 def main():
@@ -138,7 +138,7 @@ def main():
     a = ap.parse_args()
 
     changed = changed_functions(a.repo, a.commit, a.src_dir)
-    d = decide(changed, budget=a.budget)
+    d = decide(a.repo, changed, budget=a.budget)
     if a.json:
         print(json.dumps(asdict(d), indent=2))
         return

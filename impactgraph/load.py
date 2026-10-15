@@ -47,12 +47,12 @@ def build(repo: Path, package: str, src_dir: str = "src", test_dir: str = "tests
     commits = extract_git.extract(repo, src_dir + "/", test_dir + "/", max_commits)
     print(f"history: {len(commits)} commits")
 
-    g = connect()
+    g = connect(repo)
     try:
         g.delete()
     except Exception:
         pass
-    g = connect()
+    g = connect(repo)
     for label, prop in [("Module", "path"), ("Function", "id"), ("TestFile", "path"),
                         ("Test", "id"), ("Commit", "sha")]:
         g.query(f"CREATE INDEX FOR (n:{label}) ON (n.{prop})")

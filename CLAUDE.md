@@ -30,6 +30,10 @@ Working end to end on pallets/click:
 - `impactgraph/impact.py` — changed functions from a commit or working tree → ranked, explained selection.
 - `impactgraph/evaluate.py` — mutation testing vs full suite, random same-size baseline.
 - `impactgraph/db.py` — FalkorDB server if `FALKORDB_HOST` set, else embedded FalkorDB Lite at `data/impactgraph.db`.
+  One graph per repo: `impactgraph:<repo dir>` (e.g. `impactgraph:click`).
+- `impactgraph/tools.py` — `Toolbox`: 7 read-only (`ro_query`) graph tools for the agent; tracks returned test ids + a call trace.
+- `impactgraph/agent.py` — Claude (Opus 5.5, Tool Runner) picks tools, submits a decision; code enforces: tests must come
+  from a tool, path computed by EXPLAIN_PATH, unknown names in reasons replaced, explicit outcome per function.
 
 Graph on click: 17 modules, 545 functions, 2,210 tests, 360 commits, ~157k edges.
 
@@ -39,7 +43,7 @@ The 2 misses = the only killing test ranked too low → motivation for the memor
 
 ## How to run
 ```bash
-pip install falkordb falkordblite pytest pytest-cov coverage
+pip install falkordb falkordblite pytest pytest-cov coverage anthropic python-dotenv
 git clone https://github.com/pallets/click ../click
 pip install -e ../click
 (cd ../click && COVERAGE_CORE=ctrace python -m pytest -q --cov=src/click --cov-context=test --cov-report=)
@@ -47,6 +51,8 @@ pip install -e ../click
 python -m impactgraph.load --repo ../click --package click
 python -m impactgraph.impact --repo ../click --commit <sha>
 python -m impactgraph.evaluate --repo ../click --mutants 40
+cp .env.example .env   # add ANTHROPIC_API_KEY
+python -m impactgraph.agent --repo ../click --commit <sha>   # --json, --model, --effort, --budget
 ```
 
 ## Next steps, in order

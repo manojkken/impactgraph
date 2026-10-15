@@ -42,11 +42,18 @@ RETURN f.id AS function, t.id AS test, t.file AS file, t.breadth AS breadth,
 """
 
 # 5. Explain one decision: the call path from what a test runs to what changed.
+#    Either the test covers the function itself (0 hops), or it covers a caller
+#    from which the function is reachable. FalkorDB only allows shortestPath in
+#    WITH/RETURN; the caller picks the row with the fewest hops.
 EXPLAIN_PATH = """
-MATCH (t:Test {id: $test})-[:COVERS]->(entry:Function)
-MATCH p = shortestPath((entry)-[:CALLS*0..4]->(f:Function {id: $function}))
+MATCH (t:Test {id: $test})-[:COVERS]->(f:Function {id: $function})
+RETURN [f.qualname] AS path, 0 AS hops
+UNION
+MATCH (t:Test {id: $test})-[:COVERS]->(entry:Function), (f:Function {id: $function})
+WHERE entry <> f
+WITH shortestPath((entry)-[:CALLS*1..4]->(f)) AS p
+WHERE p IS NOT NULL
 RETURN [n IN nodes(p) | n.qualname] AS path, length(p) AS hops
-ORDER BY hops LIMIT 1
 """
 
 # 6. Blast radius summary: everything a change can reach upwards in the call graph.

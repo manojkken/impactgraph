@@ -85,9 +85,9 @@ def main():
     a = ap.parse_args()
     rnd = random.Random(a.seed)
 
-    g = connect()
-    all_tests = [r[0] for r in g.query("MATCH (t:Test) RETURN t.id").result_set]
-    fns = g.query("MATCH (f:Function) WHERE f.tests > 0 RETURN f.id, f.module, f.start, f.end").result_set
+    g = connect(a.repo)
+    all_tests = [r[0] for r in g.ro_query("MATCH (t:Test) RETURN t.id").result_set]
+    fns = g.ro_query("MATCH (f:Function) WHERE f.tests > 0 RETURN f.id, f.module, f.start, f.end").result_set
     rnd.shuffle(fns)
 
     results = []
@@ -109,7 +109,7 @@ def main():
                 print(f"survived full suite: {fid} line {ln} ({desc})")
                 results.append({"function": fid, "line": ln, "mutation": desc, "killed": False})
                 continue
-            d = decide([fid], budget=a.budget)
+            d = decide(a.repo, [fid], budget=a.budget)
             chosen = [p.test for p in d.selected]
             _, sel_t = run_pytest(a.repo, chosen)
             random_pick = set(rnd.sample(all_tests, len(chosen)))
