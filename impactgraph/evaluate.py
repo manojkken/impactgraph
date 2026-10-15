@@ -5,6 +5,10 @@ drop a `not`, flip a boolean constant), run the FULL test suite to learn which
 tests catch it, then check whether ImpactGraph's selection would have caught it.
 A random selection of the same size is the baseline.
 
+Ablation: the same killed mutants are scored for several rankers (coverage edges
+only, + co-change history, full) at several test budgets. Catching a mutant only
+needs the set of tests that failed in the full run, so variants cost no extra runs.
+
     python -m impactgraph.evaluate --repo ../click --mutants 25
 """
 from __future__ import annotations
@@ -18,8 +22,15 @@ import sys
 import time
 from pathlib import Path
 
+from . import queries as Q
 from .db import connect
 from .impact import decide
+
+VARIANTS = {
+    "coverage": dict(use_history=False, use_calls=False, use_names=False),
+    "coverage+history": dict(use_calls=False, use_names=False),
+    "full": {},
+}
 
 FLIP = {ast.Eq: "!=", ast.NotEq: "==", ast.Lt: ">=", ast.GtE: "<", ast.Gt: "<=",
         ast.LtE: ">", ast.Is: "is not", ast.IsNot: "is", ast.In: "not in", ast.NotIn: "in"}
@@ -60,16 +71,21 @@ def mutations(source: str, start: int, end: int):
                 yield ln, line, new, f"{node.value} -> {not node.value}"
 
 
-def run_pytest(repo: Path, test_ids: list[str] | None, timeout: int = 900) -> tuple[set[str], float]:
+def run_pytest(repo: Path, test_ids: list[str] | None, timeout: int = 120) -> tuple[set[str], float]:
     args = [sys.executable, "-m", "pytest", "-q", "-rf", "--tb=no", "-p", "no:cacheprovider",
             "-o", "console_output_style=classic"]
     if test_ids is not None:
         args += test_ids
     t0 = time.time()
     try:
-        out = subprocess.run(args, cwd=repo, capture_output=True, text=True, timeout=timeout).stdout
+        proc = subprocess.run(args, cwd=repo, capture_output=True, text=True, timeout=timeout)
     except subprocess.TimeoutExpired:
         return {"<timeout>"}, timeout
+    # 0 = passed, 1 = some tests failed; anything else (collection/import error,
+    # usage error) means nothing ran, which must not be scored as "mutant survived"
+    if proc.returncode not in (0, 1):
+        raise RuntimeError(f"pytest exited {proc.returncode}:\n{(proc.stdout + proc.stderr)[-2000:]}")
+    out = proc.stdout
     failed = {l[7:].split(" - ")[0].strip() for l in out.splitlines() if l.startswith("FAILED ")}
     return failed, time.time() - t0
 
@@ -81,9 +97,11 @@ def main():
     ap.add_argument("--mutants", type=int, default=25)
     ap.add_argument("--budget", type=int, default=60)
     ap.add_argument("--seed", type=int, default=7)
+    ap.add_argument("--budgets", default="5,10,20,60", help="ablation budgets")
     ap.add_argument("--out", type=Path, default=Path("data/evaluation.json"))
     a = ap.parse_args()
     rnd = random.Random(a.seed)
+    budgets = [int(b) for b in a.budgets.split(",")]
 
     g = connect(a.repo)
     all_tests = [r[0] for r in g.ro_query("MATCH (t:Test) RETURN t.id").result_set]
@@ -105,6 +123,10 @@ def main():
         try:
             path.write_text("".join(lines), encoding="utf-8")
             killers, full_t = run_pytest(a.repo, None)
+            if "<timeout>" in killers:  # the bug made the suite hang: no killing tests to score
+                print(f"hung full suite: {fid} line {ln} ({desc})", flush=True)
+                results.append({"function": fid, "line": ln, "mutation": desc, "killed": False, "hung": True})
+                continue
             if not killers:
                 print(f"survived full suite: {fid} line {ln} ({desc})")
                 results.append({"function": fid, "line": ln, "mutation": desc, "killed": False})
@@ -113,8 +135,15 @@ def main():
             chosen = [p.test for p in d.selected]
             _, sel_t = run_pytest(a.repo, chosen)
             random_pick = set(rnd.sample(all_tests, len(chosen)))
+            ablation = {}
+            for b in budgets:
+                for name, flags in VARIANTS.items():
+                    picked = {p.test for p in decide(a.repo, [fid], budget=b, **flags).selected}
+                    ablation[f"{name}@{b}"] = bool(killers & picked)
+                ablation[f"random@{b}"] = bool(killers & set(rnd.sample(all_tests, b)))
             r = {"function": fid, "line": ln, "mutation": desc, "killed": True,
-                 "killers": len(killers), "selected": len(chosen), "coverage_set": d.coverage_set_size,
+                 "killers": len(killers), "killer_tests": sorted(killers), "ablation": ablation,
+                 "selected": len(chosen), "coverage_set": d.coverage_set_size,
                  "caught": bool(killers & set(chosen)), "random_caught": bool(killers & random_pick),
                  "full_seconds": round(full_t, 1), "selected_seconds": round(sel_t, 1)}
             results.append(r)
@@ -133,6 +162,14 @@ def main():
         "avg_full_seconds": round(sum(r["full_seconds"] for r in killed) / max(len(killed), 1), 1),
         "avg_selected_seconds": round(sum(r["selected_seconds"] for r in killed) / max(len(killed), 1), 1),
     }
+    # ablation: caught per ranker per budget, over the same killed mutants
+    summary["ablation"] = {k: sum(r["ablation"][k] for r in killed)
+                           for k in (killed[0]["ablation"] if killed else {})}
+    # the call graph's job is code with no coverage, which mutation testing cannot reach
+    untested = [r[0] for r in g.ro_query("MATCH (f:Function) WHERE f.tests = 0 RETURN f.id").result_set]
+    reach = {r[0] for r in g.ro_query(Q.UNCOVERED_FALLBACK, {"changed": untested}).result_set}
+    summary["blind_spots"] = {"untested_functions": len(untested),
+                              "reachable_via_call_graph": len(reach)}
     a.out.parent.mkdir(parents=True, exist_ok=True)
     a.out.write_text(json.dumps({"summary": summary, "results": results}, indent=2))
     print(json.dumps(summary, indent=2))

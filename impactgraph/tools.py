@@ -131,6 +131,16 @@ class Toolbox:
         self._log("blast_radius", {"functions": functions}, t0, len(r), "BLAST_RADIUS")
         return out
 
+    # 8. PageRank over CALLS: how load-bearing each changed function is
+    def load_bearing(self, functions: list[str]) -> dict:
+        t0 = time.time()
+        rows = self._rows(Q.LOAD_BEARING, changed=functions)
+        out = {fid: {"pagerank_rank": rank, "of": total,
+                     "top_percent": round(100 * rank / total, 1), "score": round(score, 5)}
+               for fid, score, rank, total in rows}
+        self._log("load_bearing", {"functions": functions}, t0, len(rows), "LOAD_BEARING")
+        return out
+
     # 7. the rule-based ranking (impact.decide) as a starting point
     def baseline_selection(self, functions: list[str], budget: int = 40) -> dict:
         t0 = time.time()

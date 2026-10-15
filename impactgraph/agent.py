@@ -42,8 +42,8 @@ You can only see the graph through the tools. Work like a careful reviewer:
 1. get_change: what changed, how many tests cover each function, how often it changed before.
 2. baseline_selection: the rule-based ranking. Treat it as a starting point, not the answer.
 3. Investigate where the baseline may be weak: direct_tests for heavily changed or risky functions, \
-uncovered_callers for functions no test runs, cochanged_test_files for history, blast_radius for \
-how far the change spreads, explain_path when a link is not obvious.
+uncovered_callers for functions no test runs, cochanged_test_files for history, blast_radius and \
+load_bearing (PageRank) for how far and how central the change is, explain_path when a link is not obvious.
 4. Call submit_decision exactly once.
 
 Selection rules:
@@ -158,6 +158,18 @@ def run(repo: Path, commit: str | None, model: str = MODEL, effort: str = "mediu
         return json.dumps(tb.blast_radius(functions))
 
     @beta_tool
+    def load_bearing(functions: list[str]) -> str:
+        """PageRank (FalkorDB algo.pageRank) over the call graph: how much of the code ends up
+        calling each function. top_percent 1 means among the most load-bearing 1%; such changes
+        deserve broader testing. CALLS edges are resolved approximately by name, so treat the
+        rank as a hint, not a fact.
+
+        Args:
+            functions: Function ids.
+        """
+        return json.dumps(tb.load_bearing(functions))
+
+    @beta_tool
     def explain_path(test: str, function: str) -> str:
         """The graph path from a test to a function: the test covers it directly, or covers a
         caller that reaches it through CALLS edges. found=false means the graph has no path.
@@ -186,7 +198,7 @@ def run(repo: Path, commit: str | None, model: str = MODEL, effort: str = "mediu
         return json.dumps({"accepted": len(kept)})
 
     tools = [get_change, baseline_selection, direct_tests, cochanged_test_files,
-             uncovered_callers, blast_radius, explain_path, submit_decision]
+             uncovered_callers, blast_radius, load_bearing, explain_path, submit_decision]
     target = f"commit {commit}" if commit else "the uncommitted changes"
     client = anthropic.Anthropic()
     runner = client.beta.messages.tool_runner(

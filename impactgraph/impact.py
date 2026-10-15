@@ -56,7 +56,10 @@ def changed_functions(repo: Path, commit: str | None, src_dir: str = "src") -> l
     return sorted(out)
 
 
-def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 60) -> Decision:
+def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 60,
+           use_history: bool = True, use_calls: bool = True, use_names: bool = True) -> Decision:
+    """Rank tests for the changed functions. The use_* switches turn off one kind of
+    graph evidence at a time so evaluate.py can measure what each one adds."""
     g = connect(repo)
     rows = lambda q, **p: g.ro_query(q, p).result_set
 
@@ -66,7 +69,7 @@ def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 
     known = [i["id"] for i in info]
 
     cochanged = [dict(zip(["file", "commits", "via"], r))
-                 for r in rows(Q.COCHANGED_TEST_FILES, changed=known)]
+                 for r in rows(Q.COCHANGED_TEST_FILES, changed=known)] if use_history else []
     co = {c["file"]: c["commits"] for c in cochanged}
 
     picks: dict[str, Pick] = {}
@@ -90,7 +93,7 @@ def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 
         s = focus * idf * (0.5 + depth)
         short = fid.split("::")[1]
         reason = f"runs {short} ({lines} lines; test touches {breadth} functions)"
-        if fname.lower().strip("_") in test.lower():
+        if use_names and fname.lower().strip("_") in test.lower():
             s *= 2
             reason += "; named after it"
         if file in co:
@@ -100,7 +103,8 @@ def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 
 
     uncovered = [i["id"] for i in info if i["tests"] == 0]
     seen_fb = set()
-    for fid, test, file, breadth, via, hops in rows(Q.UNCOVERED_FALLBACK, changed=uncovered):
+    for fid, test, file, breadth, via, hops in (rows(Q.UNCOVERED_FALLBACK, changed=uncovered)
+                                                if use_calls else []):
         if (fid, test) in seen_fb:
             continue
         seen_fb.add((fid, test))

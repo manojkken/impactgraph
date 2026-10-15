@@ -62,3 +62,15 @@ UNWIND $changed AS fid
 MATCH (f:Function {id: fid})<-[:CALLS*1..3]-(up:Function)
 RETURN count(DISTINCT up) AS callers, collect(DISTINCT up.module) AS modules
 """
+
+# 7. Load-bearing code: FalkorDB's PageRank over the call graph. Score flows from
+#    callers to callees, so functions that much of the code ends up calling rank
+#    high; a change there deserves extra caution. Rank 1 = most load-bearing.
+LOAD_BEARING = """
+CALL algo.pageRank('Function', 'CALLS') YIELD node, score
+WITH collect({id: node.id, score: score}) AS all
+UNWIND $changed AS fid
+WITH fid, all, [x IN all WHERE x.id = fid][0] AS me
+WHERE me IS NOT NULL
+RETURN fid, me.score AS score, size([x IN all WHERE x.score > me.score]) + 1 AS rank, size(all) AS total
+"""
