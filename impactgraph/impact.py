@@ -35,6 +35,7 @@ class Decision:
     uncovered: list[str]
     cochanged_files: list[dict]
     blast_radius: dict
+    memory_hits: int = 0
 
 
 def changed_functions(repo: Path, commit: str | None, src_dir: str = "src") -> list[str]:
@@ -57,7 +58,8 @@ def changed_functions(repo: Path, commit: str | None, src_dir: str = "src") -> l
 
 
 def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 60,
-           use_history: bool = True, use_calls: bool = True, use_names: bool = True) -> Decision:
+           use_history: bool = True, use_calls: bool = True, use_names: bool = True,
+           use_memory: bool = True) -> Decision:
     """Rank tests for the changed functions. The use_* switches turn off one kind of
     graph evidence at a time so evaluate.py can measure what each one adds."""
     g = connect(repo)
@@ -71,6 +73,18 @@ def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 
     cochanged = [dict(zip(["file", "commits", "via"], r))
                  for r in rows(Q.COCHANGED_TEST_FILES, changed=known)] if use_history else []
     co = {c["file"]: c["commits"] for c in cochanged}
+
+    # memory: tests that failed in past runs that changed the same function
+    mem = {(r[0], r[1]): (r[7], r[8], r[9]) for r in rows(Q.RECALL, changed=known)} if use_memory else {}
+
+    def remembered(fid, test, s, reason):
+        commit, weight, missed_weight = mem[(fid, test)]
+        s *= 1 + min(weight, 3)  # weight ~0.9 per narrow run, ~0.15 per run where 700 tests failed
+        reason += f"; failed when {fid.split('::')[1]} changed before (run on {str(commit)[:10]})"
+        if missed_weight:
+            s *= 1 + 0.5 * min(missed_weight, 1)
+            reason += ", and we missed it then"
+        return s, reason
 
     picks: dict[str, Pick] = {}
     per_fn: dict[str, list[tuple[float, str]]] = defaultdict(list)
@@ -99,7 +113,15 @@ def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 
         if file in co:
             s *= 1 + 0.5 * min(co[file], 4)
             reason += f"; its file changed with this code in {co[file]} commits"
+        if (fid, test) in mem:
+            s, reason = remembered(fid, test, s, reason)
         add(test, file, fid, s, reason)
+
+    # remembered tests with no coverage link to the function (e.g. it was untested back then)
+    for fid, test in mem.keys() - {(f, t) for f, lst in per_fn.items() for _, t in lst}:
+        top = max((x for x, _ in per_fn.get(fid, [])), default=1.0)
+        s, reason = remembered(fid, test, top / 2, "no coverage link")
+        add(test, None, fid, s, reason)
 
     uncovered = [i["id"] for i in info if i["tests"] == 0]
     seen_fb = set()
@@ -124,7 +146,7 @@ def decide(repo: Path, changed: list[str], per_function: int = 5, budget: int = 
     br = rows(Q.BLAST_RADIUS, changed=known)
     blast = {"callers": br[0][0], "modules": sorted(set(br[0][1]))} if br else {}
     return Decision(info, sorted(chosen.values(), key=lambda p: -p.score), len(coverage_set),
-                    total, uncovered, cochanged[:8], blast)
+                    total, uncovered, cochanged[:8], blast, len(mem))
 
 
 def explain(repo: Path, test: str, function: str) -> list[str]:

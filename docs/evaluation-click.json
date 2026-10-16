@@ -5884,5 +5884,1713 @@
       "full_seconds": 6.0,
       "selected_seconds": 0.4
     }
-  ]
+  ],
+  "memory": {
+    "method": "per function: bug A's failing tests recorded as a Run; a different bug B scored with/without memory",
+    "weighting": "each run weighted 1/log2(2 + failed/10); derived on seed 7 after v1 (unweighted) lost 3 pairs",
+    "heldout_seed11": {
+      "summary": {
+        "pairs": 40,
+        "skipped": 16,
+        "caught_without_memory": {
+          "5": 28,
+          "10": 29,
+          "20": 33,
+          "60": 37
+        },
+        "caught_with_memory": {
+          "5": 27,
+          "10": 29,
+          "20": 33,
+          "60": 37
+        },
+        "a_caught_nothing": 13,
+        "focus": []
+      },
+      "results": [
+        {
+          "function": "click/_termui_impl.py::_resolve_pager_command",
+          "bug_a": "line 440 (drop not)",
+          "bug_b": "line 433 (drop not)",
+          "killers_a": 57,
+          "killers_b": 52,
+          "overlap": 52,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Command.make_context",
+          "bug_a": "line 1387 (not in -> in)",
+          "bug_b": "line 1392 (False -> True)",
+          "killers_a": 10,
+          "killers_b": 5,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          }
+        },
+        {
+          "function": "click/termui.py::confirm",
+          "bug_a": "line 291 (False -> True)",
+          "bug_b": "line 337 (== -> !=)",
+          "killers_a": 5,
+          "killers_b": 11,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::Choice.normalize_choice",
+          "bug_a": "line 421 (drop not)",
+          "bug_b": "line 418 (is not -> is)",
+          "killers_a": 12,
+          "killers_b": 1,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Command.main",
+          "bug_a": "line 1635 (!= -> ==)",
+          "bug_b": "line 1617 (drop not)",
+          "killers_a": 0,
+          "killers_b": 9,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::_interpret_color",
+          "bug_a": "line 623 (and -> or)",
+          "bug_b": "line 629 (== -> !=)",
+          "killers_a": 37,
+          "killers_b": 13,
+          "overlap": 13,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.type_cast_value",
+          "bug_a": "line 2756 (== -> !=)",
+          "bug_b": "line 2733 (== -> !=)",
+          "killers_a": 34,
+          "killers_b": 38,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::_guess_type",
+          "bug_a": "line 1321 (is not -> is)",
+          "bug_b": "line 1324 (is -> is not)",
+          "killers_a": 244,
+          "killers_b": 40,
+          "overlap": 40,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Option.flag_activation_value",
+          "bug_a": "line 3246 (True -> False)",
+          "bug_b": "line 3245 (is -> is not)",
+          "killers_a": 183,
+          "killers_b": 297,
+          "overlap": 179,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::_build_prompt",
+          "bug_a": "line 111 (False -> True)",
+          "bug_b": "line 123 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 75,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.shell_complete",
+          "bug_a": "line 3047 (and -> or)",
+          "bug_b": "line 3044 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 21,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/formatting.py::HelpFormatter.__init__",
+          "bug_a": "line 140 (is -> is not)",
+          "bug_b": "line 134 (is -> is not)",
+          "killers_a": 8,
+          "killers_b": 6,
+          "overlap": 6,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::progressbar",
+          "bug_a": "line 447 (False -> True)",
+          "bug_b": "line 450 (False -> True)",
+          "killers_a": 17,
+          "killers_b": 2,
+          "overlap": 1,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_compat.py::get_text_stderr",
+          "bug_a": "line 358 (True -> False)",
+          "bug_b": "line 356 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 66,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_compat.py::_find_binary_writer",
+          "bug_a": "line 199 (False -> True)",
+          "bug_b": "line 206 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 25,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Option._resolve_lazy_default",
+          "bug_a": "line 3338 (is -> is not)",
+          "bug_b": "line 3334 (drop not)",
+          "killers_a": 134,
+          "killers_b": 1,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          }
+        },
+        {
+          "function": "click/testing.py::make_input_stream",
+          "bug_a": "line 218 (is not -> is)",
+          "bug_b": "line 223 (is -> is not)",
+          "killers_a": 1,
+          "killers_b": 102,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Option.__init__",
+          "bug_a": "line 3181 (is -> is not)",
+          "bug_b": "line 3216 (is -> is not)",
+          "killers_a": 1066,
+          "killers_b": 2,
+          "overlap": 2,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          }
+        },
+        {
+          "function": "click/core.py::Command._main_shell_completion",
+          "bug_a": "line 1675 (drop not)",
+          "bug_b": "line 1669 (is -> is not)",
+          "killers_a": 1200,
+          "killers_b": 1200,
+          "overlap": 1200,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::ProgressBar.__init__",
+          "bug_a": "line 55 (False -> True)",
+          "bug_b": "line 79 (is -> is not)",
+          "killers_a": 0,
+          "killers_b": 5,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/formatting.py::join_options",
+          "bug_a": "line 309 (False -> True)",
+          "bug_b": "line 315 (True -> False)",
+          "killers_a": 2,
+          "killers_b": 3,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Option.consume_value",
+          "bug_a": "line 3839 (is not -> is)",
+          "bug_b": "line 3866 (>= -> <)",
+          "killers_a": 10,
+          "killers_b": 70,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/shell_completion.py::_is_incomplete_argument",
+          "bug_a": "line 657 (< -> >=)",
+          "bug_b": "line 648 (False -> True)",
+          "killers_a": 1,
+          "killers_b": 21,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/testing.py::_pause_echo",
+          "bug_a": "line 77 (False -> True)",
+          "bug_b": "line 75 (True -> False)",
+          "killers_a": 0,
+          "killers_b": 2,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/shell_completion.py::_is_incomplete_option",
+          "bug_a": "line 678 (False -> True)",
+          "bug_b": "line 677 (drop not)",
+          "killers_a": 5,
+          "killers_b": 20,
+          "overlap": 5,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::_pager_contextmanager",
+          "bug_a": "line 479 (or -> and)",
+          "bug_b": "line 462 (drop not)",
+          "killers_a": 0,
+          "killers_b": 54,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::_pipepager",
+          "bug_a": "line 578 (== -> !=)",
+          "bug_b": "line 582 (drop not)",
+          "killers_a": 11,
+          "killers_b": 9,
+          "overlap": 4,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/utils.py::_LazyFile.__init__",
+          "bug_a": "line 126 (False -> True)",
+          "bug_b": "line 137 (in -> not in)",
+          "killers_a": 1,
+          "killers_b": 3,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::ProgressBar.format_progress_line",
+          "bug_a": "line 238 (is not -> is)",
+          "bug_b": "line 227 (is -> is not)",
+          "killers_a": 4,
+          "killers_b": 6,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_compat.py::open_stream",
+          "bug_a": "line 381 (in -> not in)",
+          "bug_b": "line 396 (drop not)",
+          "killers_a": 6,
+          "killers_b": 15,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::Tuple.convert",
+          "bug_a": "line 1307 (False -> True)",
+          "bug_b": "line 1295 (!= -> ==)",
+          "killers_a": 0,
+          "killers_b": 18,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::ProgressBar.generator",
+          "bug_a": "line 361 (drop not)",
+          "bug_b": "line 364 (drop not)",
+          "killers_a": 11,
+          "killers_b": 8,
+          "overlap": 7,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/decorators.py::version_option.<locals>.callback",
+          "bug_a": "line 524 (== -> !=)",
+          "bug_b": "line 512 (is not -> is)",
+          "killers_a": 3,
+          "killers_b": 3,
+          "overlap": 3,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::Editor.get_editor",
+          "bug_a": "line 709 (is not -> is)",
+          "bug_b": "line 697 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 18,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::_NumberRangeBase.convert",
+          "bug_a": "line 677 (is not -> is)",
+          "bug_b": "line 682 (is not -> is)",
+          "killers_a": 20,
+          "killers_b": 3,
+          "overlap": 3,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::_check_nested_chain",
+          "bug_a": "line 84 (False -> True)",
+          "bug_b": "line 86 (drop not)",
+          "killers_a": 0,
+          "killers_b": 7,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.get_default",
+          "bug_a": "line 2645 (True -> False)",
+          "bug_b": "line 2669 (and -> or)",
+          "killers_a": 0,
+          "killers_b": 1,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Group.invoke",
+          "bug_a": "line 2076 (drop not)",
+          "bug_b": "line 2108 (True -> False)",
+          "killers_a": 12,
+          "killers_b": 6,
+          "overlap": 6,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/decorators.py::command.<locals>.decorator",
+          "bug_a": "line 236 (is not -> is)",
+          "bug_b": "line 222 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 999,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/decorators.py::make_pass_decorator",
+          "bug_a": "line 52 (False -> True)",
+          "bug_b": "line 86 (is -> is not)",
+          "killers_a": 1,
+          "killers_b": 5,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        }
+      ]
+    },
+    "dev_seed7": {
+      "summary": {
+        "pairs": 40,
+        "skipped": 14,
+        "caught_without_memory": {
+          "5": 26,
+          "10": 27,
+          "20": 33,
+          "60": 38
+        },
+        "caught_with_memory": {
+          "5": 30,
+          "10": 30,
+          "20": 34,
+          "60": 38
+        },
+        "a_caught_nothing": 7,
+        "focus": [
+          {
+            "function": "click/core.py::Option._parse_decls",
+            "bug_a": "line 3500 (drop not)",
+            "bug_b": "line 3485 (and -> or)",
+            "killers_a": 2,
+            "killers_b": 214,
+            "overlap": 0,
+            "without": {
+              "5": false,
+              "10": false,
+              "20": false,
+              "60": false
+            },
+            "with": {
+              "5": false,
+              "10": false,
+              "20": false,
+              "60": false
+            }
+          }
+        ]
+      },
+      "results": [
+        {
+          "function": "click/core.py::Option._parse_decls",
+          "bug_a": "line 3500 (drop not)",
+          "bug_b": "line 3485 (and -> or)",
+          "killers_a": 2,
+          "killers_b": 214,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.handle_parse_result",
+          "bug_a": "line 2949 (False -> True)",
+          "bug_b": "line 2989 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 1112,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/utils.py::_make_default_short_help",
+          "bug_a": "line 89 (<= -> >)",
+          "bug_b": "line 71 (and -> or)",
+          "killers_a": 23,
+          "killers_b": 30,
+          "overlap": 11,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/shell_completion.py::_is_incomplete_option",
+          "bug_a": "line 686 (> -> <=)",
+          "bug_b": "line 680 (or -> and)",
+          "killers_a": 13,
+          "killers_b": 1,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Context.invoke",
+          "bug_a": "line 929 (is -> is not)",
+          "bug_b": "line 920 (and -> or)",
+          "killers_a": 15,
+          "killers_b": 3,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::confirm",
+          "bug_a": "line 337 (is not -> is)",
+          "bug_b": "line 294 (True -> False)",
+          "killers_a": 14,
+          "killers_b": 44,
+          "overlap": 14,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/decorators.py::command.<locals>.decorator",
+          "bug_a": "line 239 (is not -> is)",
+          "bug_b": "line 245 (in -> not in)",
+          "killers_a": 109,
+          "killers_b": 28,
+          "overlap": 28,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.consume_value",
+          "bug_a": "line 2703 (is -> is not)",
+          "bug_b": "line 2711 (is not -> is)",
+          "killers_a": 86,
+          "killers_b": 265,
+          "overlap": 1,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::Editor.edit",
+          "bug_a": "line 785 (== -> !=)",
+          "bug_b": "line 759 (drop not)",
+          "killers_a": 1,
+          "killers_b": 1,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Context._default_map_has",
+          "bug_a": "line 802 (is not -> is)",
+          "bug_b": "line 800 (is not -> is)",
+          "killers_a": 29,
+          "killers_b": 1250,
+          "overlap": 27,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::pause",
+          "bug_a": "line 1012 (is -> is not)",
+          "bug_b": "line 1017 (False -> True)",
+          "killers_a": 1,
+          "killers_b": 1,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/formatting.py::HelpFormatter.write_usage",
+          "bug_a": "line 172 (drop not)",
+          "bug_b": "line 166 (is -> is not)",
+          "killers_a": 63,
+          "killers_b": 249,
+          "overlap": 62,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Argument.make_metavar",
+          "bug_a": "line 3954 (and -> or)",
+          "bug_b": "line 3945 (is not -> is)",
+          "killers_a": 0,
+          "killers_b": 83,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.type_cast_value",
+          "bug_a": "line 2751 (or -> and)",
+          "bug_b": "line 2732 (is -> is not)",
+          "killers_a": 1183,
+          "killers_b": 320,
+          "overlap": 317,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.get_default",
+          "bug_a": "line 2645 (True -> False)",
+          "bug_b": "line 2672 (and -> or)",
+          "killers_a": 0,
+          "killers_b": 82,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Group.result_callback",
+          "bug_a": "line 1946 (False -> True)",
+          "bug_b": "line 1978 (or -> and)",
+          "killers_a": 0,
+          "killers_b": 5,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::Path.__init__",
+          "bug_a": "line 1129 (drop not)",
+          "bug_b": "line 1111 (True -> False)",
+          "killers_a": 8,
+          "killers_b": 5,
+          "overlap": 2,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Command.parse_args",
+          "bug_a": "line 1416 (is -> is not)",
+          "bug_b": "line 1419 (drop not)",
+          "killers_a": 742,
+          "killers_b": 5,
+          "overlap": 1,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/formatting.py::join_options",
+          "bug_a": "line 314 (== -> !=)",
+          "bug_b": "line 309 (False -> True)",
+          "killers_a": 5,
+          "killers_b": 2,
+          "overlap": 2,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Option.__init__",
+          "bug_a": "line 3159 (False -> True)",
+          "bug_b": "line 3166 (False -> True)",
+          "killers_a": 729,
+          "killers_b": 18,
+          "overlap": 4,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          }
+        },
+        {
+          "function": "click/utils.py::open_file",
+          "bug_a": "line 386 (False -> True)",
+          "bug_b": "line 424 (drop not)",
+          "killers_a": 1,
+          "killers_b": 4,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Group.to_info_dict",
+          "bug_a": "line 1829 (False -> True)",
+          "bug_b": "line 1824 (is -> is not)",
+          "killers_a": 0,
+          "killers_b": 2,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Context.forward",
+          "bug_a": "line 956 (not in -> in)",
+          "bug_b": "line 952 (drop not)",
+          "killers_a": 1,
+          "killers_b": 2,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Option.get_help_spec.<locals>._write_opts",
+          "bug_a": "line 3575 (True -> False)",
+          "bug_b": "line 3577 (and -> or)",
+          "killers_a": 3,
+          "killers_b": 23,
+          "overlap": 3,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/exceptions.py::UsageError.show",
+          "bug_a": "line 94 (is not -> is)",
+          "bug_b": "line 88 (is -> is not)",
+          "killers_a": 20,
+          "killers_b": 46,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/formatting.py::HelpFormatter.__init__",
+          "bug_a": "line 136 (is -> is not)",
+          "bug_b": "line 140 (is -> is not)",
+          "killers_a": 248,
+          "killers_b": 8,
+          "overlap": 8,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::_NumberRangeBase.__init__",
+          "bug_a": "line 647 (False -> True)",
+          "bug_b": "line 648 (False -> True)",
+          "killers_a": 9,
+          "killers_b": 8,
+          "overlap": 4,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::_less_uses_raw_mode",
+          "bug_a": "line 539 (== -> !=)",
+          "bug_b": "line 540 (True -> False)",
+          "killers_a": 4,
+          "killers_b": 1,
+          "overlap": 1,
+          "without": {
+            "5": false,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::File.resolve_lazy_flag",
+          "bug_a": "line 982 (False -> True)",
+          "bug_b": "line 980 (in -> not in)",
+          "killers_a": 0,
+          "killers_b": 1,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/types.py::Choice.get_metavar",
+          "bug_a": "line 438 (== -> !=)",
+          "bug_b": "line 427 (== -> !=)",
+          "killers_a": 4,
+          "killers_b": 15,
+          "overlap": 4,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Context.command_path",
+          "bug_a": "line 753 (is not -> is)",
+          "bug_b": "line 751 (is not -> is)",
+          "killers_a": 237,
+          "killers_b": 51,
+          "overlap": 51,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/core.py::Parameter.make_metavar",
+          "bug_a": "line 2621 (is not -> is)",
+          "bug_b": "line 2629 (!= -> ==)",
+          "killers_a": 17,
+          "killers_b": 4,
+          "overlap": 4,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/testing.py::CliRunner.__init__",
+          "bug_a": "line 368 (not in -> in)",
+          "bug_b": "line 372 (== -> !=)",
+          "killers_a": 62,
+          "killers_b": 8,
+          "overlap": 8,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::_interpret_color",
+          "bug_a": "line 631 (drop not)",
+          "bug_b": "line 618 (and -> or)",
+          "killers_a": 7,
+          "killers_b": 9,
+          "overlap": 1,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/testing.py::_pause_echo",
+          "bug_a": "line 72 (is -> is not)",
+          "bug_b": "line 75 (True -> False)",
+          "killers_a": 103,
+          "killers_b": 2,
+          "overlap": 2,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/parser.py::_Option.process",
+          "bug_a": "line 174 (== -> !=)",
+          "bug_b": "line 178 (== -> !=)",
+          "killers_a": 7,
+          "killers_b": 3,
+          "overlap": 2,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/_termui_impl.py::ProgressBar.make_step",
+          "bug_a": "line 316 (is not -> is)",
+          "bug_b": "line 298 (and -> or)",
+          "killers_a": 1,
+          "killers_b": 2,
+          "overlap": 1,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::secho",
+          "bug_a": "line 784 (False -> True)",
+          "bug_b": "line 808 (and -> or)",
+          "killers_a": 2,
+          "killers_b": 2,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/decorators.py::version_option",
+          "bug_a": "line 554 (False -> True)",
+          "bug_b": "line 539 (is -> is not)",
+          "killers_a": 0,
+          "killers_b": 1,
+          "overlap": 0,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        },
+        {
+          "function": "click/termui.py::getchar",
+          "bug_a": "line 979 (is -> is not)",
+          "bug_b": "line 957 (False -> True)",
+          "killers_a": 1,
+          "killers_b": 1,
+          "overlap": 1,
+          "without": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          },
+          "with": {
+            "5": true,
+            "10": true,
+            "20": true,
+            "60": true
+          }
+        }
+      ]
+    },
+    "v1_unweighted_seed7_summary": {
+      "pairs": 40,
+      "skipped": 14,
+      "caught_without_memory": {
+        "5": 26,
+        "10": 27,
+        "20": 33,
+        "60": 38
+      },
+      "caught_with_memory": {
+        "5": 28,
+        "10": 29,
+        "20": 33,
+        "60": 37
+      },
+      "a_caught_nothing": 7,
+      "focus": [
+        {
+          "function": "click/core.py::Option._parse_decls",
+          "bug_a": "line 3500 (drop not)",
+          "bug_b": "line 3485 (and -> or)",
+          "killers_a": 2,
+          "killers_b": 214,
+          "overlap": 0,
+          "without": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          },
+          "with": {
+            "5": false,
+            "10": false,
+            "20": false,
+            "60": false
+          }
+        }
+      ]
+    }
+  }
 }

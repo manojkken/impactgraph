@@ -23,7 +23,7 @@ import argparse
 import time
 from pathlib import Path
 
-from . import extract_code, extract_coverage, extract_git
+from . import extract_code, extract_coverage, extract_git, memory
 from .db import connect
 
 BATCH = 2000
@@ -48,13 +48,14 @@ def build(repo: Path, package: str, src_dir: str = "src", test_dir: str = "tests
     print(f"history: {len(commits)} commits")
 
     g = connect(repo)
+    kept = memory.export(g)  # test-run memory outlives a rebuild; it is re-linked by id below
     try:
         g.delete()
     except Exception:
         pass
     g = connect(repo)
     for label, prop in [("Module", "path"), ("Function", "id"), ("TestFile", "path"),
-                        ("Test", "id"), ("Commit", "sha")]:
+                        ("Test", "id"), ("Commit", "sha"), ("Run", "id")]:
         g.query(f"CREATE INDEX FOR (n:{label}) ON (n.{prop})")
 
     _batched(g, "UNWIND $rows AS r CREATE (:Module {path: r.path})",
@@ -97,6 +98,8 @@ def build(repo: Path, package: str, src_dir: str = "src", test_dir: str = "tests
     _batched(g, """UNWIND $rows AS r MATCH (c:Commit {sha: r.sha}), (tf:TestFile {path: r.p})
                    CREATE (c)-[:TOUCHED]->(tf)""",
              [{"sha": c.sha, "p": p} for c in commits for p in c.test_files])
+    if kept:
+        print("memory restored:", memory.restore(g, kept))
 
     stats = g.query("MATCH (n) RETURN labels(n)[0] AS l, count(n) ORDER BY l").result_set
     rels = g.query("MATCH ()-[r]->() RETURN type(r), count(r) ORDER BY type(r)").result_set

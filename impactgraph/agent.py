@@ -6,9 +6,10 @@ submits a test selection. It never writes Cypher, it only picks tools.
 
 Guarantees enforced in code, not in the prompt:
   * a selected test must have been returned by a graph tool;
-  * every kept test carries a path computed by EXPLAIN_PATH, never written by the model;
+  * every kept test carries a path computed by the graph (EXPLAIN_PATH, or EXPLAIN_MEMORY for a test
+    that failed when this function changed before), never written by the model;
   * reasons that name code the graph never returned are replaced by a sentence built from rows;
-  * each changed function ends in an explicit outcome (path / untested / not in graph).
+  * each changed function ends in an explicit outcome (path / memory / untested / not in graph).
 
 Needs ANTHROPIC_API_KEY (read from .env).
 """
@@ -35,16 +36,18 @@ PRICES = {"claude-opus-5-5": (4.0, 20.0, 0.20), "claude-sonnet-5-5": (2.0, 10.0,
 
 SYSTEM = """You are ImpactGraph, a test-selection agent. For a code change you decide which tests \
 to run, using a FalkorDB graph of the repository: functions, the tests that execute them \
-(per-test coverage), the static call graph, and git history (which test files changed together \
-with which functions).
+(per-test coverage), the static call graph, git history (which test files changed together \
+with which functions), and memory of past test runs (which tests failed when a function changed).
 
 You can only see the graph through the tools. Work like a careful reviewer:
 1. get_change: what changed, how many tests cover each function, how often it changed before.
 2. baseline_selection: the rule-based ranking. Treat it as a starting point, not the answer.
-3. Investigate where the baseline may be weak: direct_tests for heavily changed or risky functions, \
+3. recall: tests that failed before when these functions changed. A remembered failure, especially \
+a past miss, is strong evidence; keep such tests unless they are clearly unrelated.
+4. Investigate where the baseline may be weak: direct_tests for heavily changed or risky functions, \
 uncovered_callers for functions no test runs, cochanged_test_files for history, blast_radius and \
 load_bearing (PageRank) for how far and how central the change is, explain_path when a link is not obvious.
-4. Call submit_decision exactly once.
+5. Call submit_decision exactly once.
 
 Selection rules:
 - Every test you select must have come back from a tool in this session. Never invent or edit test ids.
@@ -87,10 +90,12 @@ def validate(tb: Toolbox, selected: list[Choice]) -> tuple[list[dict], list[dict
             rejected.append({**c, "why": "test id was not returned by any tool"})
             continue
         p = tb.explain_path(c["test"], c["function"], record=False)
-        if not p["found"]:
+        m = tb.explain_memory(c["test"], c["function"])
+        if not p["found"] and not m["found"]:
             rejected.append({**c, "why": "graph has no path from this test to that function"})
             continue
-        kept.append({**c, "path": p["path"], "hops": p["hops"]})
+        kept.append({**c, "path": p["path"] if p["found"] else m["path"], "hops": p.get("hops"),
+                     **({"memory": m["path"]} if m["found"] else {})})
     tb._log("guardrail", {"submitted": len(selected), "kept": len(kept)}, t0, len(kept), "EXPLAIN_PATH")
     return kept, rejected
 
@@ -118,6 +123,18 @@ def run(repo: Path, commit: str | None, model: str = MODEL, effort: str = "mediu
             budget: Maximum number of tests to return.
         """
         return json.dumps(tb.baseline_selection(functions, budget))
+
+    @beta_tool
+    def recall(functions: list[str]) -> str:
+        """Memory of past test runs: tests that failed in earlier runs that changed the same
+        functions, how often (failed_in_runs), and how often they failed without having been
+        selected (missed_in_runs, a past mistake). Empty means no recorded runs, not that the
+        code is safe.
+
+        Args:
+            functions: Changed function ids exactly as returned by get_change.
+        """
+        return json.dumps(tb.recall(functions))
 
     @beta_tool
     def direct_tests(functions: list[str], limit: int = 15) -> str:
@@ -197,7 +214,7 @@ def run(repo: Path, commit: str | None, model: str = MODEL, effort: str = "mediu
                                "note": "Rejected tests were dropped. Do not resubmit; finish."})
         return json.dumps({"accepted": len(kept)})
 
-    tools = [get_change, baseline_selection, direct_tests, cochanged_test_files,
+    tools = [get_change, baseline_selection, recall, direct_tests, cochanged_test_files,
              uncovered_callers, blast_radius, load_bearing, explain_path, submit_decision]
     target = f"commit {commit}" if commit else "the uncommitted changes"
     client = anthropic.Anthropic()
@@ -256,16 +273,20 @@ def _finish(tb: Toolbox, state: dict, usage: dict, model: str, budget: int, stop
     for s in decision["selected"]:
         if _unknown_names(s["reason"], known):
             fn = s["function"].split("::")[1]
-            s["reason"] = (f"covers {fn} directly" if s["hops"] == 0
+            s["reason"] = (f"failed when {fn} changed before" if s["hops"] is None
+                           else f"covers {fn} directly" if s["hops"] == 0
                            else f"reaches {fn} through {s['hops']} call hop(s)")
             s["reason_replaced"] = True
             replaced += 1
 
-    covered = {s["function"] for s in decision["selected"]}
+    covered = {s["function"] for s in decision["selected"] if s.get("hops") is not None}
+    from_memory = {s["function"] for s in decision["selected"] if s.get("memory")}
     outcomes = {}
     for c in change["changed_functions"]:
         if c["id"] in covered:
             outcomes[c["id"]] = "answered_with_path"
+        elif c["id"] in from_memory:
+            outcomes[c["id"]] = "answered_from_memory"
         elif c["tests"] == 0:
             outcomes[c["id"]] = "untested_graph_does_not_know"
         else:
@@ -288,6 +309,8 @@ def render(d: dict) -> str:
            d["summary"], "", f"## Run {len(d['selected'])} of {d['total_tests']} tests"]
     for s in d["selected"]:
         out += [f"- `{s['test']}`", f"  - why: {s['reason']}", f"  - path: {s['path']}"]
+        if s.get("memory") and s["memory"] != s["path"]:
+            out.append(f"  - memory: {s['memory']}")
     out += ["", "## Changed functions"]
     out += [f"- {f.split('::')[1]}: {o}" for f, o in d["outcomes"].items()]
     if d["risks"]:

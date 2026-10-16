@@ -141,6 +141,35 @@ class Toolbox:
         self._log("load_bearing", {"functions": functions}, t0, len(rows), "LOAD_BEARING")
         return out
 
+    # 9. memory: tests that failed in past runs that changed the same functions
+    def recall(self, functions: list[str], limit: int = 10) -> dict:
+        t0 = time.time()
+        rows = self._rows(Q.RECALL, changed=functions)
+        by_fn: dict[str, list[dict]] = {}
+        for fid, test, file, breadth, failures, missed, last_date, commit, _, _ in rows:
+            by_fn.setdefault(fid, []).append({"test": test, "file": file, "test_breadth": breadth,
+                                              "failed_in_runs": failures, "missed_in_runs": int(missed),
+                                              "last_run_commit": commit})
+        out = {}
+        for fid, lst in by_fn.items():
+            # past misses first, then repeat offenders, then focused tests
+            lst.sort(key=lambda d: (-d["missed_in_runs"], -d["failed_in_runs"], d["test_breadth"]))
+            top = lst[:limit]
+            self.seen_tests.update(d["test"] for d in top)
+            out[fid] = {"remembered_failures": len(lst), "top": top}
+        for fid in functions:
+            out.setdefault(fid, {"remembered_failures": 0, "top": []})
+        self._log("recall", {"functions": functions}, t0, len(rows), "RECALL")
+        return out
+
+    def explain_memory(self, test: str, function: str) -> dict:
+        r = self._rows(Q.EXPLAIN_MEMORY, test=test, function=function)
+        if not r:
+            return {"found": False}
+        commit, date, source = r[0]
+        return {"found": True, "hops": None, "commit": commit,
+                "path": f"{test} -FAILED_IN-> Run({str(commit)[:10]}, {source}) -CHANGED-> {function.split('::')[1]}"}
+
     # 7. the rule-based ranking (impact.decide) as a starting point
     def baseline_selection(self, functions: list[str], budget: int = 40) -> dict:
         t0 = time.time()

@@ -74,3 +74,59 @@ WITH fid, all, [x IN all WHERE x.id = fid][0] AS me
 WHERE me IS NOT NULL
 RETURN fid, me.score AS score, size([x IN all WHERE x.score > me.score]) + 1 AS rank, size(all) AS total
 """
+
+# --- Memory: what happened when tests ran (track 2) -------------------------
+# (:Run)-[:CHANGED]->(:Function), (:Run)-[:SELECTED]->(:Test), (:Test)-[:FAILED_IN]->(:Run).
+# "Missed" is not stored: a test that FAILED_IN a run that had a selection, without being SELECTED.
+# Writes run only from memory.py (and load.py when restoring); agent tools stay read-only.
+
+# 8. Record one run. The three link queries match by id, so ids the graph does not know are skipped.
+RECORD_RUN = """
+CREATE (r:Run {id: $id, commit: $commit, date: $date, source: $source, selected: $n_selected,
+               failed: $n_failed})
+"""
+LINK_CHANGED = """
+MATCH (r:Run {id: $id}) UNWIND $ids AS x MATCH (f:Function {id: x}) CREATE (r)-[:CHANGED]->(f)
+RETURN count(*)
+"""
+LINK_SELECTED = """
+MATCH (r:Run {id: $id}) UNWIND $ids AS x MATCH (t:Test {id: x}) CREATE (r)-[:SELECTED]->(t)
+RETURN count(*)
+"""
+LINK_FAILED = """
+MATCH (r:Run {id: $id}) UNWIND $ids AS x MATCH (t:Test {id: x}) CREATE (t)-[:FAILED_IN]->(r)
+RETURN count(*)
+"""
+
+# 9. Recall: tests that failed in past runs that changed the same function,
+#    how often, and how often we failed to select them (a past miss).
+#    weight: a failure in a run where few tests failed is specific evidence; one test out of
+#    700 failing says little about it (the same idea as discounting broad tests).
+RECALL = """
+UNWIND $changed AS fid
+MATCH (t:Test)-[:FAILED_IN]->(r:Run)-[:CHANGED]->(f:Function {id: fid})
+OPTIONAL MATCH (r)-[s:SELECTED]->(t)
+WITH f, t, r, CASE WHEN s IS NULL AND r.selected > 0 THEN 1 ELSE 0 END AS miss,
+     1.0 / (log(2 + coalesce(r.failed, 1) / 10.0) / log(2)) AS w
+RETURN f.id AS function, t.id AS test, t.file AS file, t.breadth AS breadth,
+       count(DISTINCT r) AS failures, sum(miss) AS missed, max(r.date) AS last_date,
+       collect(r.commit)[0] AS commit, sum(w) AS weight, sum(miss * w) AS missed_weight
+"""
+
+# 10. Explain a memory-based choice: test -FAILED_IN-> Run -CHANGED-> function.
+EXPLAIN_MEMORY = """
+MATCH (t:Test {id: $test})-[:FAILED_IN]->(r:Run)-[:CHANGED]->(f:Function {id: $function})
+RETURN r.commit AS commit, r.date AS date, r.source AS source
+ORDER BY r.date DESC LIMIT 1
+"""
+
+# 11. Everything in memory, by id, so a graph rebuild (load.py) can restore it.
+EXPORT_MEMORY = """
+MATCH (r:Run)
+OPTIONAL MATCH (r)-[:CHANGED]->(f:Function)
+WITH r, collect(f.id) AS changed
+OPTIONAL MATCH (r)-[:SELECTED]->(s:Test)
+WITH r, changed, collect(s.id) AS selected
+OPTIONAL MATCH (t:Test)-[:FAILED_IN]->(r)
+RETURN r.id, r.commit, r.date, r.source, changed, selected, collect(t.id) AS failed
+"""

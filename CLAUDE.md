@@ -25,16 +25,24 @@ Working end to end on pallets/click:
 - `impactgraph/extract_coverage.py` — per-test coverage (`pytest --cov=src/click --cov-context=test`) → Test-COVERS->Function.
 - `impactgraph/extract_git.py` — commits → MODIFIED functions (parsed at that revision) and TOUCHED test files.
 - `impactgraph/load.py` — builds the graph (≈20 s). Precomputes `Test.breadth`, `Function.tests`, `Function.size`.
-- `impactgraph/queries.py` — the 7 Cypher queries (changed functions, direct tests, co-changed test files,
-  uncovered fallback via call graph, explain path, blast radius, load-bearing via `algo.pageRank`).
+- `impactgraph/queries.py` — the Cypher queries: 7 read (changed functions, direct tests, co-changed test files,
+  uncovered fallback via call graph, explain path, blast radius, load-bearing via `algo.pageRank`) + memory
+  (RECORD_RUN/LINK_*, RECALL, EXPLAIN_MEMORY, EXPORT_MEMORY).
+- `impactgraph/memory.py` — memory (track 2): `(:Run)-[:CHANGED]->(:Function)`, `(:Run)-[:SELECTED]->(:Test)`,
+  `(:Test)-[:FAILED_IN]->(:Run)`; missed = failed and not selected. Fed from pytest `--junitxml`.
+  Only writer besides load.py (which exports memory before a rebuild and re-links it by id).
 - `impactgraph/impact.py` — changed functions from a commit or working tree → ranked, explained selection.
+  `use_memory`: tests that failed when the function changed before get boosted, weighted by how few tests failed.
 - `impactgraph/evaluate.py` — mutation testing vs full suite, random same-size baseline, ablation
   (coverage / +history / full at budgets 5,10,20,60), blind-spot count; raises on pytest exit codes other than 0/1.
+  `--memory`: bug A → memory, score a different bug B with/without, in a copy graph `impactgraph:click:eval`.
+  Runs pytest with PYTHONPATH=<repo>/src (the .pth problem below keeps coming back).
 - `impactgraph/db.py` — FalkorDB server if `FALKORDB_HOST` set, else embedded FalkorDB Lite at `data/impactgraph.db`.
   One graph per repo: `impactgraph:<repo dir>` (e.g. `impactgraph:click`).
-- `impactgraph/tools.py` — `Toolbox`: 8 read-only (`ro_query`) graph tools for the agent; tracks returned test ids + a call trace.
+- `impactgraph/tools.py` — `Toolbox`: 9 read-only (incl. `recall`) (`ro_query`) graph tools for the agent; tracks returned test ids + a call trace.
 - `impactgraph/agent.py` — Claude (Opus 5.5, Tool Runner) picks tools, submits a decision; code enforces: tests must come
-  from a tool, path computed by EXPLAIN_PATH, unknown names in reasons replaced, explicit outcome per function.
+  from a tool, path computed by EXPLAIN_PATH (or EXPLAIN_MEMORY), unknown names in reasons replaced, explicit outcome
+  per function (answered_with_path / answered_from_memory / untested_graph_does_not_know / tests_exist_none_selected / not_in_graph).
 
 Graph on click: 17 modules, 545 functions, 2,209 tests, 360 commits, ~157k edges.
 
@@ -45,6 +53,12 @@ Ablation (caught of 31 @ budget 5/10/20/60): coverage 25/26/28/30, +history 25/2
 (83 untested functions, 9 reachable via callers), which mutants cannot measure.
 The 1 miss: `Option._parse_decls` line 3485 — 214 killers, but the top 60 cover a different branch
 → motivation for the memory track (or line-level COVERS).
+
+**Memory evaluation** (`memory` in the same file; 40 pairs, caught bug B @ budget 5/10/20/60):
+held-out seed 11: without 28/29/33/37, with 27/29/33/37 (neutral). Dev seed 7 (weighting derived here):
+without 26/27/33/38, with 30/30/34/38. Unweighted v1 on seed 7 lost 3 pairs (bug A with hundreds of killers).
+Limits: 13/40 bug A's caught nothing, ~12 pairs had zero killer overlap; `_parse_decls` not helped
+(bug A had 2 killers, overlap 0). Mutation pairs are a pessimistic proxy for real recurring regressions.
 
 ## How to run
 ```bash
@@ -58,13 +72,16 @@ pip install -e ../click
 python -m impactgraph.load --repo ../click --package click
 python -m impactgraph.impact --repo ../click --commit <sha>
 python -m impactgraph.evaluate --repo ../click --mutants 40
+python -m impactgraph.evaluate --repo ../click --memory --mutants 40 --focus "click/core.py::Option._parse_decls:3485"
+python -m impactgraph.memory record --repo ../click --commit <sha> --junit report.xml   # pytest --junitxml
+python -m impactgraph.memory show --repo ../click
 cp .env.example .env   # add ANTHROPIC_API_KEY
 python -m impactgraph.agent --repo ../click --commit <sha>   # --json, --model, --effort, --budget
 ```
 
 ## Next steps, in order
 1. ~~Agent layer~~ (done: agent.py). LLM reads a PR/diff, calls the queries as tools, writes the decision with graph paths.
-2. Feedback loop: store test runs/failures/misses in the graph (Run, FAILED_IN edges); re-rank from them.
+2. ~~Feedback loop~~ (done: memory.py). Store test runs/failures/misses in the graph (Run, FAILED_IN edges); re-rank from them.
 3. Small web UI: PR → selected tests → graph path per test. Deploy (or document local setup).
 4. README (setup, graph model diagram, Cypher queries, results, AI-use disclosure), LICENSE, demo video.
 
