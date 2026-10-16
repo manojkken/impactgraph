@@ -40,6 +40,9 @@ Working end to end on pallets/click:
 - `impactgraph/db.py` — FalkorDB server if `FALKORDB_HOST` set, else embedded FalkorDB Lite at `data/impactgraph.db`.
   One graph per repo: `impactgraph:<repo dir>` (e.g. `impactgraph:click`).
 - `impactgraph/tools.py` — `Toolbox`: 9 read-only (incl. `recall`) (`ro_query`) graph tools for the agent; tracks returned test ids + a call trace.
+- `impactgraph/web.py` + `impactgraph/static/index.html` — local UI (stdlib http.server, 127.0.0.1, read-only):
+  commit list → live rule-based selection with a graph path per test; saved agent runs from `docs/agent-runs/<sha>.json`
+  (f67c2bb, 22177f8, 9f0bcdf; $0.59 total) with outcomes, risks and the tool/Cypher trace; eval headline.
 - `impactgraph/agent.py` — Claude (Opus 5.5, Tool Runner) picks tools, submits a decision; code enforces: tests must come
   from a tool, path computed by EXPLAIN_PATH (or EXPLAIN_MEMORY), unknown names in reasons replaced, explicit outcome
   per function (answered_with_path / answered_from_memory / untested_graph_does_not_know / tests_exist_none_selected / not_in_graph).
@@ -75,6 +78,8 @@ python -m impactgraph.evaluate --repo ../click --mutants 40
 python -m impactgraph.evaluate --repo ../click --memory --mutants 40 --focus "click/core.py::Option._parse_decls:3485"
 python -m impactgraph.memory record --repo ../click --commit <sha> --junit report.xml   # pytest --junitxml
 python -m impactgraph.memory show --repo ../click
+python -m impactgraph.web --repo ../click          # http://localhost:8000
+python -m impactgraph.agent --repo ../click --commit <full sha> --json > docs/agent-runs/<full sha>.json   # show in UI
 cp .env.example .env   # add ANTHROPIC_API_KEY
 python -m impactgraph.agent --repo ../click --commit <sha>   # --json, --model, --effort, --budget
 ```
@@ -82,7 +87,7 @@ python -m impactgraph.agent --repo ../click --commit <sha>   # --json, --model, 
 ## Next steps, in order
 1. ~~Agent layer~~ (done: agent.py). LLM reads a PR/diff, calls the queries as tools, writes the decision with graph paths.
 2. ~~Feedback loop~~ (done: memory.py). Store test runs/failures/misses in the graph (Run, FAILED_IN edges); re-rank from them.
-3. Small web UI: PR → selected tests → graph path per test. Deploy (or document local setup).
+3. ~~Small web UI~~ (done: web.py, local). PR → selected tests → graph path per test. Deploy (or document local setup).
 4. README (setup, graph model diagram, Cypher queries, results, AI-use disclosure), LICENSE, demo video.
 
 ## Conventions

@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ImpactGraph</title>
+<style>
+:root {
+  --bg: #f7f7f5; --panel: #ffffff; --ink: #1d1d1f; --muted: #6b6b70; --line: #e3e3e0;
+  --accent: #2f5bd3; --accent-soft: #e8eefc; --test: #0f766e; --test-soft: #e0f2ef;
+  --fn: #6d28d9; --fn-soft: #efe8fd; --run: #b45309; --run-soft: #fdf0de; --bad: #b91c1c; --ok: #15803d;
+  --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #141416; --panel: #1c1c1f; --ink: #ececee; --muted: #9a9aa2; --line: #2c2c31;
+    --accent: #7c9cff; --accent-soft: #232b45; --test: #5eead4; --test-soft: #15302d;
+    --fn: #c4b5fd; --fn-soft: #2a2342; --run: #fbbf24; --run-soft: #3a2c12; --bad: #f87171; --ok: #4ade80;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink);
+       font: 14px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+header { display: flex; align-items: baseline; gap: 24px; flex-wrap: wrap;
+         padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--panel); }
+header h1 { font-size: 18px; margin: 0; }
+header h1 span { color: var(--muted); font-weight: 400; }
+.stats { display: flex; gap: 20px; flex-wrap: wrap; color: var(--muted); }
+.stats b { color: var(--ink); }
+main { display: grid; grid-template-columns: 340px 1fr; height: calc(100vh - 53px); }
+aside { border-right: 1px solid var(--line); background: var(--panel); display: flex; flex-direction: column; min-height: 0; }
+.controls { padding: 12px; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
+input[type=search] { width: 100%; padding: 7px 9px; border: 1px solid var(--line); border-radius: 6px;
+                     background: var(--bg); color: var(--ink); font: inherit; }
+.budget { display: flex; align-items: center; gap: 8px; color: var(--muted); }
+.budget input { flex: 1; }
+#commits { overflow-y: auto; flex: 1; }
+.commit { padding: 9px 12px; border-bottom: 1px solid var(--line); cursor: pointer; }
+.commit:hover { background: var(--bg); }
+.commit.active { background: var(--accent-soft); }
+.commit .sha { font-family: var(--mono); font-size: 12px; color: var(--accent); }
+.commit .meta { font-size: 12px; color: var(--muted); }
+.badge { display: inline-block; font-size: 11px; padding: 0 6px; border-radius: 9px;
+         background: var(--run-soft); color: var(--run); margin-left: 4px; }
+section#view { overflow-y: auto; padding: 18px 24px 40px; min-width: 0; }
+.empty { color: var(--muted); margin-top: 60px; text-align: center; }
+h2 { font-size: 17px; margin: 0 0 4px; }
+h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 22px 0 8px; }
+.tabs { display: flex; gap: 4px; margin: 14px 0 4px; border-bottom: 1px solid var(--line); }
+.tab { padding: 7px 12px; border: 0; background: none; color: var(--muted); cursor: pointer; font: inherit;
+       border-bottom: 2px solid transparent; }
+.tab.active { color: var(--ink); border-bottom-color: var(--accent); }
+.tab:disabled { opacity: .45; cursor: default; }
+table { border-collapse: collapse; width: 100%; }
+td, th { text-align: left; padding: 5px 8px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-weight: 600; color: var(--muted); font-size: 12px; }
+td.num { font-variant-numeric: tabular-nums; text-align: right; }
+.pick { padding: 10px 0; border-bottom: 1px solid var(--line); }
+.pick .name { font-family: var(--mono); font-size: 12.5px; word-break: break-all; }
+.pick .why { color: var(--muted); margin: 3px 0 6px; }
+.path { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; }
+.chip { font-family: var(--mono); font-size: 11.5px; padding: 2px 7px; border-radius: 5px; word-break: break-all; }
+.chip.test { background: var(--test-soft); color: var(--test); }
+.chip.function { background: var(--fn-soft); color: var(--fn); }
+.chip.run { background: var(--run-soft); color: var(--run); }
+.edge { font-family: var(--mono); font-size: 10.5px; color: var(--muted); }
+.edge::before { content: "—"; } .edge::after { content: "→"; }
+.note { padding: 9px 12px; border-radius: 6px; background: var(--accent-soft); margin: 10px 0; }
+.risk { color: var(--bad); }
+.outcome { font-family: var(--mono); font-size: 12px; }
+.outcome.answered_with_path, .outcome.answered_from_memory { color: var(--ok); }
+.outcome.untested_graph_does_not_know, .outcome.tests_exist_none_selected, .outcome.not_in_graph { color: var(--bad); }
+.trace td { font-family: var(--mono); font-size: 12px; }
+.error { color: var(--bad); }
+@media (max-width: 800px) { main { grid-template-columns: 1fr; height: auto; } aside { max-height: 45vh; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>ImpactGraph <span>· which tests to run, and why</span></h1>
+  <div class="stats" id="stats"></div>
+</header>
+<main>
+  <aside>
+    <div class="controls">
+      <input type="search" id="filter" placeholder="Filter commits by sha or message">
+      <label class="budget">Test budget <input type="range" id="budget" min="5" max="120" step="5" value="60">
+        <b id="budgetv">60</b></label>
+    </div>
+    <div id="commits"></div>
+  </aside>
+  <section id="view"><p class="empty">Pick a commit on the left.</p></section>
+</main>
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const short = (fid) => fid.split("::")[1] || fid;
+let commits = [], current = null, tab = "rules";
+
+async function get(url) {
+  const r = await fetch(url);
+  const body = await r.json();
+  if (!r.ok) throw new Error(body.error || r.statusText);
+  return body;
+}
+
+function chips(list) {
+  return `<div class="path">${list.map((c) => c.edge
+    ? `<span class="edge">${esc(c.edge)}</span>`
+    : `<span class="chip ${esc(c.kind)}">${esc(c.node)}</span>`).join("")}</div>`;
+}
+
+// agent paths are strings: "test -COVERS-> A -CALLS-> B" or "test -FAILED_IN-> Run(..) -CHANGED-> f"
+function chipsFromString(s) {
+  if (!s) return "";
+  const parts = s.split(/ -(\w+)-> /);
+  const out = [];
+  parts.forEach((p, i) => {
+    if (i % 2) out.push({edge: p});
+    else out.push({node: p, kind: i === 0 ? "test" : p.startsWith("Run(") ? "run" : "function"});
+  });
+  return chips(out);
+}
+
+async function loadStats() {
+  try {
+    const e = await get("/api/eval");
+    const s = e.summary;
+    $("#stats").innerHTML =
+      `<span>Planted bugs caught: <b>${s.caught_by_impactgraph}/${s.killed_by_full_suite}</b></span>` +
+      `<span>Tests run: <b>~${Math.round(s.avg_selected)}</b> of ${s.total_tests.toLocaleString()}</span>` +
+      `<span>Time: <b>${s.avg_selected_seconds} s</b> vs ${s.avg_full_seconds} s</span>` +
+      `<span>Random same size: <b>${s.caught_by_random_same_size}/${s.killed_by_full_suite}</b></span>`;
+  } catch (err) { $("#stats").textContent = ""; }
+}
+
+function renderCommits() {
+  const f = $("#filter").value.toLowerCase();
+  $("#commits").innerHTML = commits
+    .filter((c) => !f || c.sha.startsWith(f) || (c.subject || "").toLowerCase().includes(f))
+    .map((c) => `<div class="commit ${current === c.sha ? "active" : ""}" data-sha="${esc(c.sha)}">
+        <div><span class="sha">${esc(c.sha.slice(0, 7))}</span>${c.agent_run ? '<span class="badge">agent run</span>' : ""}</div>
+        <div>${esc(c.subject)}</div>
+        <div class="meta">${c.functions} function${c.functions === 1 ? "" : "s"} changed</div></div>`).join("");
+}
+
+async function select(sha) {
+  current = sha;
+  renderCommits();
+  const c = commits.find((x) => x.sha === sha);
+  if (!c.agent_run && tab === "agent") tab = "rules";
+  $("#view").innerHTML = `<h2>${esc(c.subject)}</h2>
+    <div class="meta"><span class="sha">${esc(sha)}</span></div>
+    <div class="tabs">
+      <button class="tab ${tab === "rules" ? "active" : ""}" data-tab="rules">Rule-based (live)</button>
+      <button class="tab ${tab === "agent" ? "active" : ""}" data-tab="agent" ${c.agent_run ? "" : "disabled title='No saved agent run for this commit'"}>Agent (saved run)</button>
+    </div><div id="body"><p class="empty">Querying the graph…</p></div>`;
+  try {
+    $("#body").innerHTML = tab === "rules" ? await renderRules(sha) : await renderAgent(sha);
+  } catch (err) {
+    $("#body").innerHTML = `<p class="error">${esc(err.message)}</p>`;
+  }
+}
+
+async function renderRules(sha) {
+  const d = await get(`/api/decide?commit=${sha}&budget=${$("#budget").value}`);
+  if (!d.changed.length) return `<p class="note">This commit changed no function the graph knows.</p>`;
+  let h = `<p class="note">Run <b>${d.selected.length}</b> of ${d.total_tests.toLocaleString()} tests
+    (plain coverage would run ${d.coverage_set_size}). Decided in ${d.ms} ms from the graph.
+    ${d.memory_hits ? ` Memory: ${d.memory_hits} remembered failures used.` : ""}</p>`;
+  h += `<h3>Changed functions</h3><table><tr><th>Function</th><th>Module</th><th class="num">Tests</th><th class="num">Past changes</th></tr>`;
+  h += d.changed.map((c) => `<tr><td>${esc(c.qualname)}</td><td>${esc(c.module)}</td>
+      <td class="num ${c.tests ? "" : "risk"}">${c.tests}</td><td class="num">${c.churn}</td></tr>`).join("") + `</table>`;
+  if (d.uncovered.length) h += `<p class="risk">No test runs: ${d.uncovered.map((u) => esc(short(u))).join(", ")}</p>`;
+  if (d.not_in_graph.length) h += `<p class="risk">Not in the graph (new code?): ${d.not_in_graph.map((u) => esc(short(u))).join(", ")}</p>`;
+  if (d.blast_radius && d.blast_radius.callers)
+    h += `<p>Blast radius: ${d.blast_radius.callers} callers up the call graph, in ${d.blast_radius.modules.map(esc).join(", ")}.</p>`;
+  h += `<h3>Selected tests, with the graph path behind each</h3>`;
+  h += d.selected.map((p) => `<div class="pick"><div class="name">${esc(p.test)}</div>
+      <div class="why">${esc(p.reasons[0])}</div>${chips(p.path)}</div>`).join("");
+  return h;
+}
+
+async function renderAgent(sha) {
+  const d = await get(`/api/agent-runs/${sha}`);
+  let h = `<p class="note">${esc(d.summary)}</p>
+    <p class="meta">Decided by ${esc(d.source)} (${esc(d.model)}) · ${d.selected.length} of ${d.total_tests.toLocaleString()} tests ·
+    cost $${d.cost_usd} · ${d.rejected.length} test(s) rejected by the guardrail</p>`;
+  h += `<h3>Outcome per changed function</h3><table>` + Object.entries(d.outcomes).map(([f, o]) =>
+      `<tr><td>${esc(short(f))}</td><td class="outcome ${esc(o)}">${esc(o)}</td></tr>`).join("") + `</table>`;
+  if (d.risks.length) h += `<h3>Risks the agent flagged</h3><ul>${d.risks.map((r) => `<li>${esc(r)}</li>`).join("")}</ul>`;
+  h += `<h3>Selected tests</h3>` + d.selected.map((s) => `<div class="pick"><div class="name">${esc(s.test)}</div>
+      <div class="why">${esc(s.reason)}</div>${chipsFromString(s.path)}
+      ${s.memory && s.memory !== s.path ? chipsFromString(s.memory) : ""}</div>`).join("");
+  h += `<h3>How the agent decided</h3><table class="trace"><tr><th>#</th><th>Tool</th><th>Cypher</th><th class="num">Rows</th><th class="num">ms</th></tr>` +
+    d.trace.map((t, i) => `<tr><td>${i + 1}</td><td>${esc(t.tool)}</td><td>${esc(t.query || "")}</td>
+      <td class="num">${t.rows}</td><td class="num">${t.ms}</td></tr>`).join("") + `</table>`;
+  return h;
+}
+
+$("#commits").addEventListener("click", (e) => {
+  const el = e.target.closest(".commit");
+  if (el) select(el.dataset.sha);
+});
+$("#view").addEventListener("click", (e) => {
+  const t = e.target.closest(".tab");
+  if (t && !t.disabled) { tab = t.dataset.tab; select(current); }
+});
+$("#filter").addEventListener("input", renderCommits);
+$("#budget").addEventListener("input", () => { $("#budgetv").textContent = $("#budget").value; });
+$("#budget").addEventListener("change", () => { if (current && tab === "rules") select(current); });
+
+(async () => {
+  loadStats();
+  try {
+    commits = await get("/api/commits");
+    renderCommits();
+    const first = commits.find((c) => c.agent_run) || commits[0];
+    if (first) select(first.sha);
+  } catch (err) {
+    $("#commits").innerHTML = `<p class="error" style="padding:12px">${esc(err.message)}</p>`;
+  }
+})();
+</script>
+</body>
+</html>

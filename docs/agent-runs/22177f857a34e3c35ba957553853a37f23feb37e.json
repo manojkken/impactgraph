@@ -1,0 +1,279 @@
+{
+  "commit": "22177f857a34e3c35ba957553853a37f23feb37e",
+  "subject": "`path_type` narrows the converted value's type for `convert` and `prompt`",
+  "source": "agent",
+  "model": "claude-opus-5-5",
+  "stop_reason": "end_turn",
+  "total_tests": 2209,
+  "summary": "This commit makes Path generic over the type set by `path_type`, so `convert` and `coerce_path_result` now return that type. coerce_path_result was rewritten to assign the result to a variable and cast it at the end instead of returning early. I selected the 27 tests that run Path.__init__, convert and coerce_path_result. They include the focused tests in tests/test_types/test_Path.py, such as test_path_type for str, bytes, Path and None, plus the option, argument and command tests that use Path.",
+  "selected": [
+    {
+      "test": "tests/test_types/test_Path.py::test_path_resolve_symlink",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Most focused test (breadth 12) that runs all three changed functions.",
+      "path": "tests/test_types/test_Path.py::test_path_resolve_symlink -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_types/test_Path.py::test_invalid_path_with_esc_sequence",
+      "function": "click/types.py::Path.convert",
+      "reason": "Most focused test for convert (breadth 9).",
+      "path": "tests/test_types/test_Path.py::test_invalid_path_with_esc_sequence -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_types/test_Path.py::test_path_type[bytes-a/b/c.txt]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs the bytes branch of the rewritten coerce_path_result.",
+      "path": "tests/test_types/test_Path.py::test_path_type[bytes-a/b/c.txt] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_types/test_Path.py::test_path_type[Path-expect3]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "covers Path.coerce_path_result directly",
+      "path": "tests/test_types/test_Path.py::test_path_type[Path-expect3] -COVERS-> Path.coerce_path_result",
+      "hops": 0,
+      "reason_replaced": true
+    },
+    {
+      "test": "tests/test_types/test_Path.py::test_path_type[str-a/b/c.txt]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs the str path_type branch.",
+      "path": "tests/test_types/test_Path.py::test_path_type[str-a/b/c.txt] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_types/test_Path.py::test_path_type[None-a/b/c.txt]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs the default path, where path_type is None.",
+      "path": "tests/test_types/test_Path.py::test_path_type[None-a/b/c.txt] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_basic.py::test_path_option",
+      "function": "click/types.py::Path.convert",
+      "reason": "Hits the most convert lines of any test (26).",
+      "path": "tests/test_basic.py::test_path_option -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_testing.py::test_tempdir_replacement_pattern",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs all three changed functions.",
+      "path": "tests/test_testing.py::test_tempdir_replacement_pattern -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args9-foo.conf-sentinel0]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs convert and coerce_path_result through an option.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args9-foo.conf-sentinel0] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args4-foo.conf-sentinel0]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs convert and coerce_path_result through an option.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args4-foo.conf-sentinel0] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args4-foo.conf-EnumSentinel.FALSY_SENTINEL]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs convert and coerce_path_result through an option.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args4-foo.conf-EnumSentinel.FALSY_SENTINEL] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args9-foo.conf-EnumSentinel.FALSY_SENTINEL]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs convert and coerce_path_result through an option.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args9-foo.conf-EnumSentinel.FALSY_SENTINEL] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_envvar_container_type",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs convert from an environment variable with a container type.",
+      "path": "tests/test_options.py::test_envvar_container_type -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_path_allow_dash",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the dash-handling branch of convert.",
+      "path": "tests/test_arguments.py::test_path_allow_dash -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params12-/tmp]",
+      "function": "click/types.py::Path.coerce_path_result",
+      "reason": "Runs coerce_path_result with default values.",
+      "path": "tests/test_commands.py::test_other_command_invoke_with_defaults[opt_params12-/tmp] -COVERS-> Path.coerce_path_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_open_file.py::test_open_file_pathlib_dash",
+      "function": "click/types.py::Path.__init__",
+      "reason": "Focused test (breadth 14) that runs Path.__init__.",
+      "path": "tests/test_utils/test_open_file.py::test_open_file_pathlib_dash -COVERS-> Path.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args8-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-sentinel0]",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the error path of convert.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args8-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-sentinel0] -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args7-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-sentinel0]",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the error path of convert.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args7-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-sentinel0] -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args7-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-EnumSentinel.FALSY_SENTINEL]",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the error path of convert.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args7-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-EnumSentinel.FALSY_SENTINEL] -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args8-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-EnumSentinel.FALSY_SENTINEL]",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the error path of convert.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args8-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File '--no-config' does not exist.\\\\n-EnumSentinel.FALSY_SENTINEL] -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args6-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File 'random-file.conf' does not exist.\\\\n-EnumSentinel.FALSY_SENTINEL]",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the error path of convert.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args6-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File 'random-file.conf' does not exist.\\\\n-EnumSentinel.FALSY_SENTINEL] -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args6-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File 'random-file.conf' does not exist.\\\\n-sentinel0]",
+      "function": "click/types.py::Path.convert",
+      "reason": "Runs the error path of convert.",
+      "path": "tests/test_options.py::test_dual_options_custom_type_sentinel_flag_value[args6-Usage: main \\\\[OPTIONS\\\\]\\\\nTry 'main --help' for help.\\\\n\\\\nError: Invalid value for '-c' / '--config': File 'random-file.conf' does not exist.\\\\n-sentinel0] -COVERS-> Path.convert",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_shell_completion.py::test_absolute_path",
+      "function": "click/types.py::Path.__init__",
+      "reason": "Runs Path.__init__ during shell completion.",
+      "path": "tests/test_shell_completion.py::test_absolute_path -COVERS-> Path.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_empty_envvar[MYPATH]",
+      "function": "click/types.py::Path.__init__",
+      "reason": "Runs Path.__init__ with an empty environment variable.",
+      "path": "tests/test_options.py::test_empty_envvar[MYPATH] -COVERS-> Path.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_empty_envvar[AUTO_MYPATH]",
+      "function": "click/types.py::Path.__init__",
+      "reason": "Runs Path.__init__ with an automatic environment variable.",
+      "path": "tests/test_options.py::test_empty_envvar[AUTO_MYPATH] -COVERS-> Path.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_basic.py::test_help_invalid_default",
+      "function": "click/types.py::Path.__init__",
+      "reason": "Runs Path.__init__ while rendering help.",
+      "path": "tests/test_basic.py::test_help_invalid_default -COVERS-> Path.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_option_help_preserve_paragraphs",
+      "function": "click/types.py::Path.__init__",
+      "reason": "Runs Path.__init__ while rendering help.",
+      "path": "tests/test_options.py::test_option_help_preserve_paragraphs -COVERS-> Path.__init__",
+      "hops": 0
+    }
+  ],
+  "risks": [
+    "Most of this change is about static types (the TypeVar default and the Generic base class). Runtime tests cannot check it; that needs mypy/pyright on the typing tests.",
+    "The class-level change (new Generic base class and TypeVar) affects every Path user, but the graph only records coverage per function. Code that subscripts or subclasses Path is not tracked.",
+    "There is no record of past test runs for these functions, so no remembered failures could guide the selection."
+  ],
+  "outcomes": {
+    "click/types.py::Path.__init__": "answered_with_path",
+    "click/types.py::Path.coerce_path_result": "answered_with_path",
+    "click/types.py::Path.convert": "answered_with_path"
+  },
+  "rejected": [],
+  "reasons_replaced": 1,
+  "trace": [
+    {
+      "tool": "get_change",
+      "args": {},
+      "query": "CHANGED_FUNCTIONS",
+      "rows": 3,
+      "ms": 111.2
+    },
+    {
+      "tool": "baseline_selection",
+      "args": {
+        "functions": [
+          "click/types.py::Path.__init__",
+          "click/types.py::Path.coerce_path_result",
+          "click/types.py::Path.convert"
+        ],
+        "budget": 40
+      },
+      "query": null,
+      "rows": 27,
+      "ms": 66.0
+    },
+    {
+      "tool": "recall",
+      "args": {
+        "functions": [
+          "click/types.py::Path.__init__",
+          "click/types.py::Path.coerce_path_result",
+          "click/types.py::Path.convert"
+        ]
+      },
+      "query": "RECALL",
+      "rows": 0,
+      "ms": 4.2
+    },
+    {
+      "tool": "direct_tests",
+      "args": {
+        "functions": [
+          "click/types.py::Path.coerce_path_result",
+          "click/types.py::Path.convert"
+        ],
+        "limit": 25
+      },
+      "query": "DIRECT_TESTS",
+      "rows": 35,
+      "ms": 5.7
+    },
+    {
+      "tool": "guardrail",
+      "args": {
+        "submitted": 27,
+        "kept": 27
+      },
+      "query": "EXPLAIN_PATH",
+      "rows": 27,
+      "ms": 218.5
+    }
+  ],
+  "usage": {
+    "input": 10,
+    "output": 3982,
+    "cache_read": 20626,
+    "cache_write": 16177
+  },
+  "cost_usd": 0.1647
+}

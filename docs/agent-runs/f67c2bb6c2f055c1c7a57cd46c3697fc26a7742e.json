@@ -1,0 +1,361 @@
+{
+  "commit": "f67c2bb6c2f055c1c7a57cd46c3697fc26a7742e",
+  "subject": "Fix short help abbreviation",
+  "source": "agent",
+  "model": "claude-opus-5-5",
+  "stop_reason": "end_turn",
+  "total_tests": 2209,
+  "summary": "_make_default_short_help was rewritten: abbreviation-aware sentence detection, textwrap.shorten truncation, and suffix-width edge cases. The selection runs all 36 parametrized unit tests for the function (breadth 1, named after it, co-changed in 2 commits) plus 4 integration tests that run it through command help output.",
+  "selected": [
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-truncate]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Focused unit test that covers truncation (14 lines hit).",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-truncate] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-never split a hyphenated word]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Covers break_on_hyphens=False in shorten.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-never split a hyphenated word] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-abbreviation inside truncated sentence]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Covers the new abbreviation logic combined with truncation.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-abbreviation inside truncated sentence] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-truncate]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Focused truncation case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-truncate] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-never split a hyphenated word]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Hyphen handling case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-never split a hyphenated word] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-abbreviation inside truncated sentence]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Abbreviation handling case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-abbreviation inside truncated sentence] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-never split a long word]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Long-word truncation case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-never split a long word] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-lowercase after dot]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Covers the new lowercase-continuation rule.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-lowercase after dot] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-ignore dot in word]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Dot-inside-word case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-ignore dot in word] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-width fits the suffix only]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Edge case where the width only fits the suffix.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-width fits the suffix only] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-dot ends text]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Last-index period case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-dot ends text] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-length includes suffix]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Checks the suffix is counted in the length.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-length includes suffix] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-digit after dot]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Non-lowercase word after a period.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-digit after dot] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-abbreviation inside sentence]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Abbreviation case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-abbreviation inside sentence] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-sentence < max]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Short-sentence case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-sentence < max] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-never split a long word]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Long-word case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-never split a long word] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-digit after dot]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Digit after a period.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-digit after dot] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-negative width]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Negative width hits the new max_length < 3 branch.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-negative width] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-sentence < max]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Short-sentence case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-sentence < max] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-abbreviation inside sentence]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Abbreviation case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-abbreviation inside sentence] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-width fits the suffix only]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Suffix-width edge case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-width fits the suffix only] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-width below the suffix]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Width below the suffix length (new branch).",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-width below the suffix] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-length includes suffix]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Suffix length case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-length includes suffix] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-dot ends text]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Period that ends the text.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-dot ends text] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-ignore dot in word]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Dot-inside-word case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-ignore dot in word] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-lowercase after dot]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Lowercase continuation rule.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-lowercase after dot] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-paragraph < max]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Paragraph partition case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-paragraph < max] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-width below the suffix]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Width below the suffix length.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-width below the suffix] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-equal length, no dot]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Boundary where the length equals the limit.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-equal length, no dot] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-text shorter than the suffix]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Text shorter than the suffix.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-text shorter than the suffix] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-negative width]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Negative width case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-negative width] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-equal length, no dot]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Equal-length boundary.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-equal length, no dot] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-paragraph < max]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Paragraph case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-paragraph < max] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-text shorter than the suffix]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Short-text case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-text shorter than the suffix] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-empty]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Empty input after the \\b marker is dropped (reordered check).",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[no-wrap mark-empty] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-empty]",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Empty input case.",
+      "path": "tests/test_utils/test_make_default_short_help.py::test_make_default_short_help[-empty] -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_commands.py::test_auto_shorthelp",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Integration test of auto short help in command listings (14 lines hit).",
+      "path": "tests/test_commands.py::test_auto_shorthelp -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_formatting.py::test_removing_multiline_marker",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Covers the \\b marker handling that was reordered in the diff.",
+      "path": "tests/test_formatting.py::test_removing_multiline_marker -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_basic.py::test_summary_line",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Summary-line output depends on short-help truncation.",
+      "path": "tests/test_basic.py::test_summary_line -COVERS-> _make_default_short_help",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_basic.py::test_basic_group",
+      "function": "click/utils.py::_make_default_short_help",
+      "reason": "Group help output runs the function (11 lines hit).",
+      "path": "tests/test_basic.py::test_basic_group -COVERS-> _make_default_short_help",
+      "hops": 0
+    }
+  ],
+  "risks": [
+    "Some of the other 54 covering tests are left out: the shell-completion tests and test_chaining_help. They also show short help, so a changed truncation result could break their expected output.",
+    "There is no failure history for this function, so past runs give no evidence either way."
+  ],
+  "outcomes": {
+    "click/utils.py::_make_default_short_help": "answered_with_path"
+  },
+  "rejected": [],
+  "reasons_replaced": 0,
+  "trace": [
+    {
+      "tool": "get_change",
+      "args": {},
+      "query": "CHANGED_FUNCTIONS",
+      "rows": 1,
+      "ms": 171.0
+    },
+    {
+      "tool": "baseline_selection",
+      "args": {
+        "functions": [
+          "click/utils.py::_make_default_short_help"
+        ],
+        "budget": 40
+      },
+      "query": null,
+      "rows": 40,
+      "ms": 89.7
+    },
+    {
+      "tool": "recall",
+      "args": {
+        "functions": [
+          "click/utils.py::_make_default_short_help"
+        ]
+      },
+      "query": "RECALL",
+      "rows": 0,
+      "ms": 5.1
+    },
+    {
+      "tool": "direct_tests",
+      "args": {
+        "functions": [
+          "click/utils.py::_make_default_short_help"
+        ],
+        "limit": 60
+      },
+      "query": "DIRECT_TESTS",
+      "rows": 54,
+      "ms": 5.7
+    },
+    {
+      "tool": "guardrail",
+      "args": {
+        "submitted": 40,
+        "kept": 40
+      },
+      "query": "EXPLAIN_PATH",
+      "rows": 40,
+      "ms": 163.4
+    }
+  ],
+  "usage": {
+    "input": 10,
+    "output": 4436,
+    "cache_read": 22378,
+    "cache_write": 19298
+  },
+  "cost_usd": 0.1897
+}

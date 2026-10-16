@@ -1,0 +1,393 @@
+{
+  "commit": "9f0bcdf0d868edfc71435cd0aac2dcc08cf94828",
+  "subject": "Add `Parameter.spec` and deprecate `human_readable_name`",
+  "source": "agent",
+  "model": "claude-opus-5-5",
+  "stop_reason": "end_turn",
+  "total_tests": 2209,
+  "summary": "The commit adds `Parameter.spec` and `Argument.spec`, deprecates `human_readable_name` (it now warns, and so does any subclass that overrides it), and adds `get_help_spec`. It also switches the error hints, the deprecation messages and the deprecated+required check over to `spec`. I picked 39 tests (budget 40). They cover the deprecation tests in test_deprecations, the test_spec and test_spec_and_help_spec tests named after the new property, the help-record tests, and the deprecated_required / deprecated_warning tests that hit the changed messages. I added a few error-hint tests (formatting usage errors, nargs and missing-option errors) for the `get_error_hint` paths.",
+  "selected": [
+    {
+      "test": "tests/test_deprecations.py::test_parameter_human_readable_name_deprecated[argument]",
+      "function": "click/core.py::Parameter.human_readable_name",
+      "reason": "Runs the deprecated property on an Argument (test breadth 2), which goes through Argument.spec.",
+      "path": "tests/test_deprecations.py::test_parameter_human_readable_name_deprecated[argument] -COVERS-> Parameter.human_readable_name",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_human_readable_name_deprecated[option]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Runs the deprecated property and Parameter.spec on an option (test breadth 3).",
+      "path": "tests/test_deprecations.py::test_parameter_human_readable_name_deprecated[option] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated[Parameter]",
+      "function": "click/core.py::Parameter.__init_subclass__",
+      "reason": "Hits the subclass override warning and the new skip argument of _outside_click_stacklevel.",
+      "path": "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated[Parameter] -COVERS-> Parameter.__init_subclass__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated[Option]",
+      "function": "click/core.py::Parameter.__init_subclass__",
+      "reason": "Hits the subclass override warning for Option.",
+      "path": "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated[Option] -COVERS-> Parameter.__init_subclass__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated[Argument]",
+      "function": "click/core.py::_outside_click_stacklevel",
+      "reason": "Checks that the warning's stacklevel walks past the abc module.",
+      "path": "tests/test_deprecations.py::test_parameter_human_readable_name_override_deprecated[Argument] -COVERS-> _outside_click_stacklevel",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent[Parameter]",
+      "function": "click/core.py::Parameter.__init_subclass__",
+      "reason": "Checks that a subclass without the override gets no warning (test breadth 1).",
+      "path": "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent[Parameter] -COVERS-> Parameter.__init_subclass__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent[Argument]",
+      "function": "click/core.py::Parameter.__init_subclass__",
+      "reason": "Checks the no-warning case for an Argument subclass.",
+      "path": "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent[Argument] -COVERS-> Parameter.__init_subclass__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent[Option]",
+      "function": "click/core.py::Parameter.__init_subclass__",
+      "reason": "Checks the no-warning case for an Option subclass.",
+      "path": "tests/test_deprecations.py::test_parameter_subclass_without_override_is_silent[Option] -COVERS-> Parameter.__init_subclass__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_spec_and_help_spec[kwargs0-FILENAME-FILENAME]",
+      "function": "click/core.py::Argument.spec",
+      "reason": "Named after the new property; covers Argument.spec and get_help_spec.",
+      "path": "tests/test_arguments.py::test_spec_and_help_spec[kwargs0-FILENAME-FILENAME] -COVERS-> Argument.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_spec_and_help_spec[kwargs1-FILENAME-[FILENAME]]",
+      "function": "click/core.py::Argument.get_help_spec",
+      "reason": "Checks the help spec for an optional argument.",
+      "path": "tests/test_arguments.py::test_spec_and_help_spec[kwargs1-FILENAME-[FILENAME]] -COVERS-> Argument.get_help_spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_spec_and_help_spec[kwargs2-FILENAME-[FILENAME]...]",
+      "function": "click/core.py::Argument.get_help_spec",
+      "reason": "Checks the help spec for a repeated (nargs) argument.",
+      "path": "tests/test_arguments.py::test_spec_and_help_spec[kwargs2-FILENAME-[FILENAME]...] -COVERS-> Argument.get_help_spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_spec_and_help_spec[kwargs3-<file>-<file>]",
+      "function": "click/core.py::Argument.spec",
+      "reason": "Checks the explicit-metavar branch of Argument.spec.",
+      "path": "tests/test_arguments.py::test_spec_and_help_spec[kwargs3-<file>-<file>] -COVERS-> Argument.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_argument_get_help_record_never_none[documented]",
+      "function": "click/core.py::Argument.get_help_record",
+      "reason": "get_help_record now delegates to get_help_spec; this test covers both.",
+      "path": "tests/test_arguments.py::test_argument_get_help_record_never_none[documented] -COVERS-> Argument.get_help_record",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_argument_get_help_record_never_none[None]",
+      "function": "click/core.py::Argument.get_help_record",
+      "reason": "Covers the help record when the argument has no help text.",
+      "path": "tests/test_arguments.py::test_argument_get_help_record_never_none[None] -COVERS-> Argument.get_help_record",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_argument_get_help_record_never_none[empty]",
+      "function": "click/core.py::Argument.get_help_record",
+      "reason": "Covers the help record when the help text is empty.",
+      "path": "tests/test_arguments.py::test_argument_get_help_record_never_none[empty] -COVERS-> Argument.get_help_record",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_help_spec_matches_help_record[None]",
+      "function": "click/core.py::Argument.get_help_spec",
+      "reason": "Checks that the help spec matches the help record.",
+      "path": "tests/test_arguments.py::test_help_spec_matches_help_record[None] -COVERS-> Argument.get_help_spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_help_spec_matches_help_record[path to the file]",
+      "function": "click/core.py::Argument.get_help_spec",
+      "reason": "Checks the same match when the argument has help text.",
+      "path": "tests/test_arguments.py::test_help_spec_matches_help_record[path to the file] -COVERS-> Argument.get_help_spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec[param_decls0---times-times]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Named after the new property; checks it picks the longest-prefix declaration.",
+      "path": "tests/test_options.py::test_spec[param_decls0---times-times] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec[param_decls1---times-times]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Checks Parameter.spec with a different declaration order.",
+      "path": "tests/test_options.py::test_spec[param_decls1---times-times] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec[param_decls2--t-t]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Checks Parameter.spec for a short-only option.",
+      "path": "tests/test_options.py::test_spec[param_decls2--t-t] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec[param_decls3---times-times]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Another declaration variant of Parameter.spec.",
+      "path": "tests/test_options.py::test_spec[param_decls3---times-times] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec[param_decls4---color-color]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Checks Parameter.spec for a --color/--no-color flag.",
+      "path": "tests/test_options.py::test_spec[param_decls4---color-color] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec[param_decls5-/debug-debug]",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Checks Parameter.spec with the / prefix, which goes through _split_opt.",
+      "path": "tests/test_options.py::test_spec[param_decls5-/debug-debug] -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_spec_with_explicit_name",
+      "function": "click/core.py::Parameter.spec",
+      "reason": "Checks Parameter.spec when the option has an explicit name.",
+      "path": "tests/test_options.py::test_spec_with_explicit_name -COVERS-> Parameter.spec",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_deprecated_required",
+      "function": "click/core.py::Parameter.__init__",
+      "reason": "Covers the deprecated+required ValueError in __init__, which now uses spec.",
+      "path": "tests/test_options.py::test_deprecated_required -COVERS-> Parameter.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_deprecated_required",
+      "function": "click/core.py::Parameter.__init__",
+      "reason": "Covers the same __init__ error message for an argument, via Argument.spec.",
+      "path": "tests/test_arguments.py::test_deprecated_required -COVERS-> Parameter.__init__",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_deprecated_warning[True]",
+      "function": "click/core.py::Parameter.handle_parse_result",
+      "reason": "Covers the deprecation message in handle_parse_result, which now uses spec.",
+      "path": "tests/test_options.py::test_deprecated_warning[True] -COVERS-> Parameter.handle_parse_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_deprecated_warning[USE B INSTEAD]",
+      "function": "click/core.py::Parameter.handle_parse_result",
+      "reason": "Covers the deprecation message with a custom suffix.",
+      "path": "tests/test_options.py::test_deprecated_warning[USE B INSTEAD] -COVERS-> Parameter.handle_parse_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_deprecated_warning[True]",
+      "function": "click/core.py::Parameter.handle_parse_result",
+      "reason": "Covers the argument deprecation message, now built from Argument.spec.",
+      "path": "tests/test_arguments.py::test_deprecated_warning[True] -COVERS-> Parameter.handle_parse_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_deprecated_warning[USE B INSTEAD]",
+      "function": "click/core.py::Parameter.handle_parse_result",
+      "reason": "Covers the argument deprecation message with a custom suffix.",
+      "path": "tests/test_arguments.py::test_deprecated_warning[USE B INSTEAD] -COVERS-> Parameter.handle_parse_result",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_formatting.py::test_formatting_usage_error_no_help",
+      "function": "click/core.py::Argument.get_error_hint",
+      "reason": "Covers Argument.get_error_hint, which now goes through get_help_spec.",
+      "path": "tests/test_formatting.py::test_formatting_usage_error_no_help -COVERS-> Argument.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_formatting.py::test_formatting_usage_error_metavar_bad_arg",
+      "function": "click/core.py::Argument.get_error_hint",
+      "reason": "Covers the error hint for an argument with a custom metavar.",
+      "path": "tests/test_formatting.py::test_formatting_usage_error_metavar_bad_arg -COVERS-> Argument.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_bad_defaults_for_nargs[default9-Error: Invalid value for '[A]...': Takes 2 values but 1 was given.]",
+      "function": "click/core.py::Argument.get_error_hint",
+      "reason": "Checks the '[A]...' hint text that get_error_hint produces.",
+      "path": "tests/test_arguments.py::test_bad_defaults_for_nargs[default9-Error: Invalid value for '[A]...': Takes 2 values but 1 was given.] -COVERS-> Argument.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_duplicate_names_warning[args_one0-args_two0]",
+      "function": "click/core.py::Argument.get_error_hint",
+      "reason": "Covers Argument.get_help_spec and get_error_hint on a parse.",
+      "path": "tests/test_arguments.py::test_duplicate_names_warning[args_one0-args_two0] -COVERS-> Argument.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_nargs_envvar[2-a-Takes 2 values but 1 was given.]",
+      "function": "click/core.py::Parameter.get_error_hint",
+      "reason": "Covers Parameter.get_error_hint in an error message.",
+      "path": "tests/test_arguments.py::test_nargs_envvar[2-a-Takes 2 values but 1 was given.] -COVERS-> Parameter.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_missing_required_flag",
+      "function": "click/core.py::Parameter.get_error_hint",
+      "reason": "Covers the option error hint for a missing required option.",
+      "path": "tests/test_options.py::test_missing_required_flag -COVERS-> Parameter.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_options.py::test_missing_envvar",
+      "function": "click/core.py::Parameter.get_error_hint",
+      "reason": "Covers the option error hint on the envvar path.",
+      "path": "tests/test_options.py::test_missing_envvar -COVERS-> Parameter.get_error_hint",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_parameter_name_not_an_identifier_is_deprecated[space-argument]",
+      "function": "click/core.py::_outside_click_stacklevel",
+      "reason": "Another caller of _outside_click_stacklevel; guards the default skip=().",
+      "path": "tests/test_arguments.py::test_parameter_name_not_an_identifier_is_deprecated[space-argument] -COVERS-> _outside_click_stacklevel",
+      "hops": 0
+    },
+    {
+      "test": "tests/test_arguments.py::test_when_argument_decorator_is_used_multiple_times_cls_is_preserved",
+      "function": "click/core.py::Parameter.__init_subclass__",
+      "reason": "A custom Argument subclass that runs __init_subclass__.",
+      "path": "tests/test_arguments.py::test_when_argument_decorator_is_used_multiple_times_cls_is_preserved -COVERS-> Parameter.__init_subclass__",
+      "hops": 0
+    }
+  ],
+  "risks": [
+    "No test executes `Parameter.get_help_spec` and the graph shows no covered callers. Only `Argument.get_help_spec` is covered, so the base version (including Option's behaviour) is untested.",
+    "`human_readable_name` now warns. Any internal or third-party code that still reads it could emit DeprecationWarnings that fail under warnings-as-errors. The graph only shows the 2 direct tests.",
+    "`Parameter.__init__` and `handle_parse_result` are covered by 1500+ and 1200+ tests. This selection only samples the lines that changed."
+  ],
+  "outcomes": {
+    "click/core.py::Argument.spec": "answered_with_path",
+    "click/core.py::Argument.get_help_spec": "answered_with_path",
+    "click/core.py::Argument.get_help_record": "answered_with_path",
+    "click/core.py::Parameter.get_help_spec": "untested_graph_does_not_know",
+    "click/core.py::Parameter.handle_parse_result": "answered_with_path",
+    "click/core.py::Argument.get_error_hint": "answered_with_path",
+    "click/core.py::Parameter.__init_subclass__": "answered_with_path",
+    "click/core.py::Parameter.get_error_hint": "answered_with_path",
+    "click/core.py::Parameter.__init__": "answered_with_path",
+    "click/core.py::Parameter.spec": "answered_with_path",
+    "click/core.py::_outside_click_stacklevel": "answered_with_path",
+    "click/core.py::Parameter.human_readable_name": "answered_with_path"
+  },
+  "rejected": [],
+  "reasons_replaced": 0,
+  "trace": [
+    {
+      "tool": "get_change",
+      "args": {},
+      "query": "CHANGED_FUNCTIONS",
+      "rows": 12,
+      "ms": 164.8
+    },
+    {
+      "tool": "baseline_selection",
+      "args": {
+        "functions": [
+          "click/core.py::Argument.spec",
+          "click/core.py::Argument.get_help_spec",
+          "click/core.py::Argument.get_help_record",
+          "click/core.py::Parameter.get_help_spec",
+          "click/core.py::Parameter.handle_parse_result",
+          "click/core.py::Argument.get_error_hint",
+          "click/core.py::Parameter.__init_subclass__",
+          "click/core.py::Parameter.get_error_hint",
+          "click/core.py::Parameter.__init__",
+          "click/core.py::Parameter.spec",
+          "click/core.py::_outside_click_stacklevel",
+          "click/core.py::Parameter.human_readable_name"
+        ],
+        "budget": 40
+      },
+      "query": null,
+      "rows": 43,
+      "ms": 183.7
+    },
+    {
+      "tool": "recall",
+      "args": {
+        "functions": [
+          "click/core.py::Argument.spec",
+          "click/core.py::Argument.get_help_spec",
+          "click/core.py::Argument.get_help_record",
+          "click/core.py::Parameter.get_help_spec",
+          "click/core.py::Parameter.handle_parse_result",
+          "click/core.py::Argument.get_error_hint",
+          "click/core.py::Parameter.__init_subclass__",
+          "click/core.py::Parameter.get_error_hint",
+          "click/core.py::Parameter.__init__",
+          "click/core.py::Parameter.spec",
+          "click/core.py::_outside_click_stacklevel",
+          "click/core.py::Parameter.human_readable_name"
+        ]
+      },
+      "query": "RECALL",
+      "rows": 0,
+      "ms": 1.5
+    },
+    {
+      "tool": "direct_tests",
+      "args": {
+        "functions": [
+          "click/core.py::Argument.spec",
+          "click/core.py::Parameter.spec",
+          "click/core.py::Parameter.human_readable_name",
+          "click/core.py::Parameter.__init_subclass__",
+          "click/core.py::Argument.get_error_hint",
+          "click/core.py::Parameter.get_error_hint"
+        ],
+        "limit": 12
+      },
+      "query": "DIRECT_TESTS",
+      "rows": 162,
+      "ms": 4.9
+    },
+    {
+      "tool": "guardrail",
+      "args": {
+        "submitted": 39,
+        "kept": 39
+      },
+      "query": "EXPLAIN_PATH",
+      "rows": 39,
+      "ms": 177.5
+    }
+  ],
+  "usage": {
+    "input": 10,
+    "output": 5250,
+    "cache_read": 31440,
+    "cache_write": 24819
+  },
+  "cost_usd": 0.2354
+}
