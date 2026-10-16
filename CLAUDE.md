@@ -88,7 +88,7 @@ python -m impactgraph.agent --repo ../click --commit <sha>   # --json, --model, 
 1. ~~Agent layer~~ (done: agent.py). LLM reads a PR/diff, calls the queries as tools, writes the decision with graph paths.
 2. ~~Feedback loop~~ (done: memory.py). Store test runs/failures/misses in the graph (Run, FAILED_IN edges); re-rank from them.
 3. ~~Small web UI~~ (done: web.py, local). PR → selected tests → graph path per test. Deploy (or document local setup).
-4. README (setup, graph model diagram, Cypher queries, results, AI-use disclosure), LICENSE, demo video.
+4. ~~README, LICENSE, requirements.txt~~ (done; fresh-install verified with FalkorDB Lite). Demo video: script in tasks/demo-script.md — Manoj records it.
 
 ## Conventions
 - Python 3.11+, small modules, plain functions. Keep Cypher in `queries.py`.
