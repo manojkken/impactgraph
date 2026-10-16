@@ -1,7 +1,10 @@
 # ImpactGraph
 
-**An AI agent that decides which tests to run for a code change, using a FalkorDB graph of the code,
-its tests and its git history, and shows the graph path behind every choice.**
+**Run only the tests your change can break, and see why each one was picked.**
+
+ImpactGraph stores a repository's code, tests and git history as a graph in FalkorDB. For each code change,
+an AI agent uses that graph to choose which tests to run. Every chosen test comes with the chain of links
+that connects it to the changed code, for example "this test runs function A, which calls the function you changed".
 
 Built for **Graph Hacks** (WeMakeDevs × FalkorDB).
 **Tracks:** *Agents That Act on Connected Data* (primary) and *Agent Memory and Coordination*.
