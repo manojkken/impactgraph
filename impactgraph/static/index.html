@@ -167,7 +167,9 @@ async function renderRules(sha) {
   if (!d.changed.length) return `<p class="note">This commit changed no function the graph knows.</p>`;
   let h = `<p class="note">Run <b>${d.selected.length}</b> of ${d.total_tests.toLocaleString()} tests
     (plain coverage would run ${d.coverage_set_size}). Decided in ${d.ms} ms from the graph.
-    ${d.memory_hits ? ` Memory: ${d.memory_hits} remembered failures used.` : ""}</p>`;
+    ${d.memory_hits ? ` Memory: ${d.memory_hits} remembered failures used.` : ""}
+    ${d.selected.length > Number($("#budget").value) ? `<br>That is more than the budget of ${$("#budget").value}:
+      every changed function always keeps its 5 strongest tests, so none is left untested.` : ""}</p>`;
   h += `<h3>Changed functions</h3><table><tr><th>Function</th><th>Module</th><th class="num">Tests</th><th class="num">Past changes</th></tr>`;
   h += d.changed.map((c) => `<tr><td>${esc(c.qualname)}</td><td>${esc(c.module)}</td>
       <td class="num ${c.tests ? "" : "risk"}">${c.tests}</td><td class="num">${c.churn}</td></tr>`).join("") + `</table>`;
