@@ -177,7 +177,7 @@ async function renderRules(sha) {
     h += `<p>Blast radius: ${d.blast_radius.callers} callers up the call graph, in ${d.blast_radius.modules.map(esc).join(", ")}.</p>`;
   h += `<h3>Selected tests, with the graph path behind each</h3>`;
   h += d.selected.map((p) => `<div class="pick"><div class="name">${esc(p.test)}</div>
-      <div class="why">${esc(p.reasons[0])}</div>${chips(p.path)}</div>`).join("");
+      ${p.links.map((l) => `<div class="why">${esc(l.reason)}</div>${chips(l.path)}`).join("")}</div>`).join("");
   return h;
 }
 

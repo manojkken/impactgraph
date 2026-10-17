@@ -13,13 +13,15 @@ This module is the only writer besides load.py; the agent's tools stay read-only
 from __future__ import annotations
 
 import argparse
+import os
+import sys
 import time
 import uuid
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from . import queries as Q
-from .db import connect
+from .db import connect, graph_name
 from .impact import changed_functions
 
 
@@ -96,7 +98,13 @@ def main():
         changed = changed_functions(a.repo, a.commit, a.src_dir)
         failed = failed_from_junit(a.junit)
         selected = a.selected.read_text().split() if a.selected else None
-        print(record(g, a.commit, changed, failed, selected))
+        res = record(g, a.commit, changed, failed, selected)
+        print(res)
+        if changed and res["linked"]["changed"][0] == 0:
+            where = f"FalkorDB at {os.environ['FALKORDB_HOST']}" if os.environ.get("FALKORDB_HOST") \
+                else "the embedded database (FALKORDB_HOST is not set)"
+            print(f"warning: none of the {len(changed)} changed functions are in graph '{graph_name(a.repo)}' "
+                  f"in {where}. Is that the database you loaded?", file=sys.stderr)
     else:
         for r in export(g):
             print(f"{r['id']}  {r['source']:5s} commit={r['commit'][:10]}  changed={len(r['changed'])} "

@@ -61,13 +61,20 @@ def _path_chips(repo: Path, test: str, fid: str) -> list[dict]:
     return []
 
 
+def _names(fid: str, reason: str) -> bool:
+    """Does the reason name this function as a whole word ('prompt' must not match '_build_prompt')?"""
+    return re.search(rf"(?<![\w.]){re.escape(fid.split('::')[1])}(?!\w)", reason) is not None
+
+
 @lru_cache(maxsize=64)
 def api_decide(repo: Path, sha: str, budget: int, src_dir: str) -> dict:
     t0 = time.time()
     changed = changed_functions(repo, sha, src_dir)
     d = decide(repo, changed, budget=budget)
     picks = [{"test": p.test, "score": round(p.score, 3), "functions": p.functions,
-              "reasons": p.reasons, "path": _path_chips(repo, p.test, p.functions[0])}
+              "links": [{"function": f, "path": _path_chips(repo, p.test, f),
+                         "reason": next((r for r in p.reasons if _names(f, r)), "")}
+                        for f in p.functions]}
              for p in d.selected]
     known = {c["id"] for c in d.changed}
     return {"commit": sha, "changed": d.changed, "not_in_graph": [c for c in changed if c not in known],
