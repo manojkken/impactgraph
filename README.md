@@ -311,6 +311,17 @@ python -m impactgraph.memory record --repo ../click --commit <sha> --junit ../cl
 python -m impactgraph.memory show --repo ../click
 ```
 
+**Run the tests** (24 tests, about 7 s; they build a tiny graph in a temporary embedded FalkorDB Lite,
+so they need no Docker, no click checkout and no API key):
+
+```bash
+python -m pytest tests -q
+```
+
+They check the guarantees above: ranking order, the call-graph fallback, explanation paths, the agent guardrail
+(rejects invented tests and tests with no path, accepts memory paths), that the tools never write, the PageRank
+direction, memory record / weighting / restore, diff and junit parsing, bug planting, and the web server's input checks.
+
 **Troubleshooting.** If `import click` suddenly fails (pytest: `ModuleNotFoundError: No module named 'click'`):
 Python 3.14 skips `.pth` files that have the macOS `hidden` flag, which breaks editable installs. Folders synced
 by iCloud can set this flag again and again. `evaluate.py` avoids the problem by running pytest with

@@ -79,6 +79,7 @@ python -m impactgraph.evaluate --repo ../click --memory --mutants 40 --focus "cl
 python -m impactgraph.memory record --repo ../click --commit <sha> --junit report.xml   # pytest --junitxml
 python -m impactgraph.memory show --repo ../click
 python -m impactgraph.web --repo ../click          # http://localhost:8000
+python -m pytest tests -q                          # 24 tests, tiny graph in temp FalkorDB Lite
 python -m impactgraph.agent --repo ../click --commit <full sha> --json > docs/agent-runs/<full sha>.json   # show in UI
 cp .env.example .env   # add ANTHROPIC_API_KEY
 python -m impactgraph.agent --repo ../click --commit <sha>   # --json, --model, --effort, --budget
