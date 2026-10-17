@@ -55,7 +55,7 @@ Ablation (caught of 31 @ budget 5/10/20/60): coverage 25/26/28/30, +history 25/2
 → per-test coverage is the backbone; history +1 at budget 10; call graph only matters for untested code
 (83 untested functions, 9 reachable via callers), which mutants cannot measure.
 The 1 miss: `Option._parse_decls` line 3485 — 214 killers, but the top 60 cover a different branch
-→ motivation for the memory track (or line-level COVERS).
+→ input-dependent: the changed line runs in 1,453/1,454 covering tests, 6 picks take the killers' branch; line/branch coverage would NOT fix it (checked Oct 16).
 
 **Memory evaluation** (`memory` in the same file; 40 pairs, caught bug B @ budget 5/10/20/60):
 held-out seed 11: without 28/29/33/37, with 27/29/33/37 (neutral). Dev seed 7 (weighting derived here):

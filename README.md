@@ -72,9 +72,10 @@ What these numbers mean:
 - **The call graph** shows 0 here *by construction*: mutants can only be planted in functions tests already run.
   Its job is untested code. 83 functions in click have no test, and for 9 of them the call graph still finds
   tests through covered callers. It also produces the explanation paths.
-- **The one miss** (`Option._parse_decls`, line 3485): 214 tests catch it, but the top 60 all exercise a
-  different branch of the same function. Function-level coverage cannot tell branches apart; line-level
-  `COVERS` edges would. See [Limits](#limits-and-future-work).
+- **The one miss** (`Option._parse_decls`, line 3485, `and` → `or`): 214 tests catch it, but none of the 60
+  selected. The bug only shows for one kind of input (an explicit name *plus* flags). Finer coverage would not
+  help: the changed line runs in 1,453 of the function's 1,454 tests, and 6 of our picks even take the same
+  branch as the killers but with different inputs. See [Limits](#limits-and-future-work).
 
 **Memory** (track 2), measured separately (`--memory`). For each function, bug A's failing tests are stored
 as a run in the graph, then a *different* bug B in the same function is scored with and without memory
@@ -350,8 +351,10 @@ git diff ──► impact.changed_functions ──► changed function ids
 
 - **`CALLS` edges are approximate.** Python is dynamic, so callees are resolved by name. The agent is told to
   treat PageRank as a hint.
-- **Coverage is per function, not per line.** This causes the one evaluation miss. Line-level `COVERS` edges would let
-  the ranker prefer tests that run the changed lines.
+- **Coverage says which code a test ran, not with which inputs.** This causes the one evaluation miss, and we
+  checked that line- or branch-level coverage would not fix it (see Results). Line-level `COVERS` edges could
+  still help for changes inside rarely-run branches; for input-dependent bugs, memory of past failures or a larger
+  budget for heavily used functions are the realistic answers.
 - **Memory:** neutral on held-out mutation pairs. Next steps would be time decay, attributing a failure only to the
   changed functions the failing test covers, and evaluating on real CI history instead of planted bugs.
 - **Tested on one repository** (click). The pipeline is generic (`--repo`, `--package`, `--src-dir`).
