@@ -9,6 +9,8 @@ that connects it to the changed code, for example "this test runs function A, wh
 Built for **Graph Hacks** (WeMakeDevs × FalkorDB).
 **Tracks:** *Agents That Act on Connected Data* (primary) and *Agent Memory and Coordination*.
 
+**Demo video (6 min):** [youtu.be/gq8vg4ULcG0](https://youtu.be/gq8vg4ULcG0)
+
 ---
 
 ## The problem
